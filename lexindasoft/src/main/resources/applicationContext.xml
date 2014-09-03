@@ -41,12 +41,12 @@
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
-        <!-- <property name="url" value="jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8"></property>
         <property name="username" value="root"></property>
-        <property name="password" value="123456"></property> -->
-        <property name="url" value="jdbc:mysql://w.rdc.sae.sina.com.cn:3307/app_lxdsoft?characterEncoding=UTF-8"></property>
+        <property name="password" value="123456"></property>
+        <!-- <property name="url" value="jdbc:mysql://w.rdc.sae.sina.com.cn:3307/app_lxdsoft?characterEncoding=UTF-8"></property>
         <property name="username" value="jzkwj22myz"></property>
-        <property name="password" value="3k3wlxlmh4iyiw40k0iiximll01wly2h5hh454xz"></property>
+        <property name="password" value="3k3wlxlmh4iyiw40k0iiximll01wly2h5hh454xz"></property> -->
         <property name="maxActive" value="100"></property>
         <property name="maxIdle" value="30"></property>
         <property name="maxWait" value="500"></property>

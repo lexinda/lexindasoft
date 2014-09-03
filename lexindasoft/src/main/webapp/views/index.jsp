@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>简单实用国产jQuery UI框架 - DWZ富客户端框架(J-UI.com)</title>
+<title>乐信达框架</title>
 
 <link href="../dwz/themes/default/style.css" rel="stylesheet" type="text/css" media="screen"/>
 <link href="../dwz/themes/css/core.css" rel="stylesheet" type="text/css" media="screen"/>
@@ -213,30 +213,13 @@ $(function(){
 						</ul>
 					</div>
 					<div class="accordionHeader">
-						<h2><span>Folder</span>典型页面</h2>
+						<h2><span>Folder</span>系统管理</h2>
 					</div>
 					<div class="accordionContent">
-						<ul class="tree treeFolder treeCheck">
-							<li><a href="demo_page1.html" target="navTab" rel="demo_page1">查询我的客户</a></li>
-							<li><a href="demo_page1.html" target="navTab" rel="demo_page2">表单查询页面</a></li>
-							<li><a href="demo_page4.html" target="navTab" rel="demo_page4">表单录入页面</a></li>
-							<li><a href="demo_page5.html" target="navTab" rel="demo_page5">有文本输入的表单</a></li>
-							<li><a href="javascript:;">有提示的表单输入页面</a>
-								<ul>
-									<li><a href="javascript:;">页面一</a></li>
-									<li><a href="javascript:;">页面二</a></li>
-								</ul>
-							</li>
-							<li><a href="javascript:;">选项卡和图形的页面</a>
-								<ul>
-									<li><a href="javascript:;">页面一</a></li>
-									<li><a href="javascript:;">页面二</a></li>
-								</ul>
-							</li>
-							<li><a href="javascript:;">选项卡和图形切换的页面</a></li>
-							<li><a href="javascript:;">左右两个互动的页面</a></li>
-							<li><a href="javascript:;">列表输入的页面</a></li>
-							<li><a href="javascript:;">双层栏目列表的页面</a></li>
+						<ul class="tree treeFolder">
+							<li><a href="/admin/manage" target="navTab" rel="user">用户管理</a></li>
+							<li><a href="/role/manage" target="navTab" rel="role">角色管理</a></li>
+							<li><a href="/menu/manage" target="navTab" rel="menu">菜单管理</a></li>
 						</ul>
 					</div>
 					<div class="accordionHeader">
