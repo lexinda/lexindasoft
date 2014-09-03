@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:context="http://www.springframework.org/schema/context" 
+		xmlns:mvc="http://www.springframework.org/schema/mvc"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:task="http://www.springframework.org/schema/task"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans
+		         http://www.springframework.org/schema/beans/spring-beans.xsd
+		         http://www.springframework.org/schema/aop 
+		         http://www.springframework.org/schema/aop/spring-aop.xsd
+                 http://www.springframework.org/schema/task 
+                 http://www.springframework.org/schema/task/spring-task.xsd
+                 http://www.springframework.org/schema/mvc 
+                 http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		         http://www.springframework.org/schema/context
+		         http://www.springframework.org/schema/context/spring-context.xsd">
+    <mvc:annotation-driven />
+    
+    <context:component-scan base-package="com.lexindasoft" />
+    <context:component-scan base-package="com.lexindasoftservice" />
+    
+    <!-- 拦截器 -->  
+    <mvc:interceptors>  
+        <!-- 多个拦截器,顺序执行 -->  
+        <mvc:interceptor>  
+           <mvc:mapping path="/*" /><!-- 如果不配置或/*,将拦截所有的Controller -->  
+           <bean class="com.lexindasoft.interceptor.CommonInterceptor"></bean>  
+        </mvc:interceptor>  
+    </mvc:interceptors>  
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.lexindasoftservice.model" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.lexindasoftservice.dao" />
+		<property name="annotationClass" value="org.springframework.stereotype.Component"></property>
+	</bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <!-- <property name="url" value="jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property> -->
+        <property name="url" value="jdbc:mysql://w.rdc.sae.sina.com.cn:3307/app_lxdsoft?characterEncoding=UTF-8"></property>
+        <property name="username" value="jzkwj22myz"></property>
+        <property name="password" value="3k3wlxlmh4iyiw40k0iiximll01wly2h5hh454xz"></property>
+        <property name="maxActive" value="100"></property>
+        <property name="maxIdle" value="30"></property>
+        <property name="maxWait" value="500"></property>
+        <property name="defaultAutoCommit" value="true"></property>
+    </bean>
+    
+    <!-- 要调用的工作类 -->
+    <bean id="quartzJob" class="com.lexindasoft.job.Task"></bean>
+    <!-- 定义调用对象和调用对象的方法 -->
+    <bean id="jobtask"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 调用的类 -->
+        <property name="targetObject">
+            <ref bean="quartzJob" />
+        </property>
+        <!-- 调用类中的方法 -->
+        <property name="targetMethod">
+            <value>work</value>
+        </property>
+    </bean>
+    <!-- 定义触发时间 -->
+    <bean id="doTime"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobtask" />
+        </property>
+        <!-- cron表达式 -->
+        <property name="cronExpression">
+        	<!-- 每天凌晨1点钟触发 -->
+            <value>5 * * * * ?</value>
+            
+            <!-- 在每天11点到11:55期间的每5分钟触发 
+            <value>0 0/2 12-19 * * ?</value>-->
+            
+        </property>
+    </bean>
+    <!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  -->
+    <bean id="startQuertz" lazy-init="false" autowire="no"
+        class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="doTime" />
+            </list>
+        </property>
+    </bean>
+    
+</beans>
