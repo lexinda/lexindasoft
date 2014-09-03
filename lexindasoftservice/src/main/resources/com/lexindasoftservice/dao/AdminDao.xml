@@ -28,8 +28,8 @@
 	</insert>
 	
 	<!-- 根据id删除系统管理员信息 -->
-	<delete id="deleteAdminInfo" parameterType="int" >
-	   DELETE FROM admin WHERE id = #{id}
+	<delete id="deleteAdminInfo" parameterType="String" >
+	   DELETE FROM admin WHERE id in (#{id})
 	</delete>
 	<!-- 根据id获取系统管理员信息 -->
 	<select id="login" parameterType="Admin" resultType="Admin">
@@ -41,7 +41,7 @@
 			create_time as createTime,
 			update_time as updateTime
 		FROM admin
-		WHERE account=#{account} AND password=#{password}
+		WHERE account=#{account} and password=#{password}
 	</select>
 	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
 	<update id="updatePwd" parameterType="Admin">
@@ -50,5 +50,26 @@
 	    update_time = now() 
 		WHERE id = #{id}
 	</update>
+	
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="getAllAdminList" parameterType="Admin" resultType="Admin">
+		SELECT id,
+			account,
+			password,
+			name,
+			status,
+			create_time as createTime,
+			update_time as updateTime
+		FROM `admin`
+		WHERE 1=1 
+		<if test="account != null">
+			and account like CONCAT('%',#{account},'%')
+		</if>
+		
+		<if test="page != -1">
+			limit #{page},#{pageNum}
+		</if>
+		
+	</select>
 
 </mapper>  

@@ -1,5 +1,7 @@
 package com.lexindasoftservice.service;
 
+import java.util.List;
+
 import com.lexindasoftservice.model.Admin;
 
 
@@ -12,8 +14,10 @@ public Admin getAdminById(int id);
 	
 	public int insertAdminInfo(Admin admin);
 	
-	public int deleteAdminInfo(int id);
+	public int deleteAdminInfo(String id);
 	
 	public Admin login(Admin admin);
+	
+	public List<Admin> getAllAdminList(Admin admin);
 	
 }

@@ -20,6 +20,10 @@ public class Admin {
 	
 	private Date updateTime;
 
+	private int page;
+	
+	private int pageNum;
+	
 	public int getId() {
 		return id;
 	}
@@ -84,12 +88,28 @@ public class Admin {
 		this.createTime = createTime;
 	}
 
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getPageNum() {
+		return pageNum;
+	}
+
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+
 	@Override
 	public String toString() {
 		return "Admin [id=" + id + ", name=" + name + ", account=" + account
 				+ ", password=" + password + ", email=" + email + ", status="
 				+ status + ", createTime=" + createTime + ", updateTime="
-				+ updateTime + "]";
+				+ updateTime + ", page=" + page + ", pageNum=" + pageNum + "]";
 	}
 
 }

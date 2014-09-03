@@ -1,5 +1,7 @@
 package com.lexindasoftservice.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class AdminServiceImpl implements AdminService {
 		return adminDao.insertAdminInfo(admin);
 	}
 
-	public int deleteAdminInfo(int id) {
+	public int deleteAdminInfo(String id) {
 		// TODO Auto-generated method stub
 		return adminDao.deleteAdminInfo(id);
 	}
@@ -35,6 +37,11 @@ public class AdminServiceImpl implements AdminService {
 	public Admin login(Admin admin) {
 		// TODO Auto-generated method stub
 		return adminDao.login(admin);
+	}
+
+	public List<Admin> getAllAdminList(Admin admin) {
+		// TODO Auto-generated method stub
+		return adminDao.getAllAdminList(admin);
 	}
 
 	
