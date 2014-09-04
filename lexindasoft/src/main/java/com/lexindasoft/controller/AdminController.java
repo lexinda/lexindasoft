@@ -21,7 +21,7 @@ import com.lexindasoftservice.model.Admin;
 import com.lexindasoftservice.service.AdminService;
 
 @Controller
-@RequestMapping(value="/admin")
+@RequestMapping(value="/validate/admin")
 public class AdminController {
 
 	final static int PAGE_NUM=20;

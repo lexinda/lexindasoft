@@ -17,7 +17,7 @@ public class CommonInterceptor implements HandlerInterceptor {
         // TODO Auto-generated constructor stub  
     }  
   
-    private String mappingURL;//��������ӳ�䵽��Ҫ���ص�·��    
+    private String mappingURL;
         public void setMappingURL(String mappingURL) {    
                this.mappingURL = mappingURL;    
        }   
@@ -27,16 +27,12 @@ public class CommonInterceptor implements HandlerInterceptor {
         // TODO Auto-generated method stub  
         log.info("============step 1================"); 
         int id = UserUtils.getId(request);
-        String url=request.getRequestURL().toString();
-        if(url.contains("login")){
-        	return true;
-        }else{
         	if(id>0){
 	        	return true;
 	        }else{    
-	            request.getRequestDispatcher("/views/login.jsp").forward(request, response);  
+//	            request.getRequestDispatcher("/views/login.jsp").forward(request, response);  
+	            response.sendRedirect("/timeout");
 	            return false;   
-	        }
         }
     }  
   

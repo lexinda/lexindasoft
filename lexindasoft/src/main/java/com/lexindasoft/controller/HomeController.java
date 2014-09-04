@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.lexindasoft.utils.UserUtils;
 import com.lexindasoftservice.model.Admin;
 import com.lexindasoftservice.service.AdminService;
 import com.lexindasoftservice.utils.Inputs;
@@ -32,10 +33,27 @@ public class HomeController {
 		logger.debug("home");
 		
 		ModelAndView mav = new ModelAndView();  
-		
-        mav.setViewName("login");
-        
+		int id = UserUtils.getId(req);
+		if(id>0){
+			 mav.setViewName("redirect:/validate/index");
+		}else{
+			 mav.setViewName("redirect:/login");
+		}
 		return mav;
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public ModelAndView goLogin(HttpServletRequest req){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("login");
+        return mav;	
+	}
+	
+	@RequestMapping(value = "/validate/index", method = RequestMethod.GET)
+	public ModelAndView goIndex(){
+		ModelAndView mav = new ModelAndView();  
+		mav.setViewName("index");
+        return mav;	
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
