@@ -21,7 +21,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="/admin/add" target="user"><span>增加用户</span></a></li>
+			<li><a class="add" href="/validate/admin/add" target="navTab"><span>新增用户</span></a></li>
 			<li><a title="是否批量删除?" target="selectedTodo" rel="ids" postType="string" href="/admin/delete" class="delete"><span>批量删除</span></a></li>
 			<li class="line">line</li>
 			<li><a class="icon" href="/admin/excel" target="dwzExport" targetType="navTab" title="是否确定导出！"><span>导出Excel数据</span></a></li>

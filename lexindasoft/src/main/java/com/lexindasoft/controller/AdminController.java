@@ -43,6 +43,39 @@ public class AdminController {
 		return mav;
 	}
 	
+	@RequestMapping(value="/add",method = RequestMethod.GET)
+	public ModelAndView adminAdd(){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("admin/admin-add");
+		return mav;
+	}
+	
+	@RequestMapping(value="/doadd",method = RequestMethod.POST)
+	public void adminDoAdd(HttpServletResponse resp){
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		jsonMap.put("statusCode", 200);
+		jsonMap.put("message", "新增成功!");
+		jsonMap.put("navTabId","user");
+		jsonMap.put("rel","");
+		jsonMap.put("callbackType","closeCurrent");
+		jsonMap.put("forwardUrl","");
+		jsonMap.put("confirmMsg","");
+		Gson gson = new Gson();
+        
+        String list1 = gson.toJson(jsonMap);
+        resp.setContentType("application/Json");
+        resp.setCharacterEncoding("UTF-8");  
+        resp.setHeader("Cache-Control", "no-cache"); 
+        PrintWriter out;
+        try { 
+            out = resp.getWriter();  
+            out.print(list1);
+            // 用于返回对象参数 
+       } catch (IOException e) {  
+            e.printStackTrace();  
+       }
+	}
+	
 	@RequestMapping(value="/active",method = RequestMethod.POST)
 	public void adminActive(@RequestParam("id")int id,HttpServletResponse resp){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
