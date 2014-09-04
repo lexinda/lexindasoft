@@ -46,12 +46,12 @@
 					<td>${admin.createTime}</td>
 					<td>
 						<c:if test="${admin.status == 0 }">
-							<a title="启用" target="ajaxTodo" href="/admin/active?id=${admin.id}" class="btnSelect">启用</a>
+							<a title="禁用状态，点击启用！" target="ajaxTodo" href="/validate/admin/active?id=${admin.id}" class="btnDel">禁用状态，点击启用！</a>
 						</c:if>
 						<c:if test="${admin.status == 1 }">
-							<a title="禁用" target="ajaxTodo" href="/admin/active?id=${admin.id}" class="btnDel">禁用</a>
+							<a title="启用状态，点击禁用！" target="ajaxTodo" href="/validate/admin/active?id=${admin.id}" class="btnSelect">启用状态，点击禁用！</a>
 						</c:if>
-						<a title="编辑" target="navTab" href="/admin/edit?id=${admin.id}" class="btnEdit">编辑</a>
+						<a title="编辑" target="navTab" href="/validate/admin/edit?id=${admin.id}" class="btnEdit">编辑</a>
 					</td>
 				</tr>
 			</c:forEach>

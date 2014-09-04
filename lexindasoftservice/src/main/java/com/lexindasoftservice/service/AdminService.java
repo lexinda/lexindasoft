@@ -8,7 +8,7 @@ import com.lexindasoftservice.model.Admin;
 
 public interface AdminService {
 	
-public Admin getAdminById(int id);
+	public Admin getAdminById(int id);
 	
 	public int updateAdminIndo(Admin admin);
 	
