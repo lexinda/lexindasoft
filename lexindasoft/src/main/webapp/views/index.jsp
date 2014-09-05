@@ -218,7 +218,7 @@ $(function(){
 					<div class="accordionContent">
 						<ul class="tree treeFolder">
 							<li><a href="/validate/admin/manage" target="navTab" rel="user">用户管理</a></li>
-							<li><a href="/role/manage" target="navTab" rel="role">角色管理</a></li>
+							<li><a href="/validate/role/manage" target="navTab" rel="role">角色管理</a></li>
 							<li><a href="/menu/manage" target="navTab" rel="menu">菜单管理</a></li>
 						</ul>
 					</div>
