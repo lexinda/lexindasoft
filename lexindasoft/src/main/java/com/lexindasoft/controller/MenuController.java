@@ -21,8 +21,8 @@ import com.lexindasoftservice.model.Role;
 import com.lexindasoftservice.service.RoleService;
 
 @Controller
-@RequestMapping(value="/validate/role")
-public class RoleController {
+@RequestMapping(value="/validate/menu")
+public class MenuController {
 
 	final static int PAGE_NUM=20;
 	
@@ -30,31 +30,29 @@ public class RoleController {
 	RoleService roleService;
 	
 	@RequestMapping(value="/manage",method = RequestMethod.GET)
-	public ModelAndView roleManage(){
+	public ModelAndView menuManage(){
 		ModelAndView mav = new ModelAndView();
 		Role role = new Role();
-		List<Role> roleList = roleService.getRoleInfo(role);
-		mav.addObject("roleList", roleList);
-		mav.setViewName("role/role-manage");
+		mav.setViewName("menu/menu-manage");
 		return mav;
 	}
 	
 	@RequestMapping(value="/add",method = RequestMethod.GET)
-	public ModelAndView adminAdd(){
+	public ModelAndView menuAdd(){
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("role/role-add");
+		mav.setViewName("menu/menu-add");
 		return mav;
 	}
 	
 	@RequestMapping()
-	public ModelAndView roleAdmin(){
+	public ModelAndView menuAdmin(){
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("role/role-admin");
+		mav.setViewName("menu/menu-admin");
 		return mav;
 	}
 	
 	@RequestMapping(value="/doadd",method = RequestMethod.POST)
-	public void roleDoAdd(HttpServletResponse resp){
+	public void menuDoAdd(HttpServletResponse resp){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("statusCode", 200);
 		jsonMap.put("message", "新增成功!");

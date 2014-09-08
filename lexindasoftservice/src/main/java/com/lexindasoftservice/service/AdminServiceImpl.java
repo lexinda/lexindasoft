@@ -19,9 +19,9 @@ public class AdminServiceImpl implements AdminService {
 		return adminDao.getAdminById(id);
 	}
 
-	public int updateAdminIndo(Admin admin) {
+	public int updateAdminInfo(Admin admin) {
 		// TODO Auto-generated method stub
-		return adminDao.updateAdminIndo(admin);
+		return adminDao.updateAdminInfo(admin);
 	}
 
 	public int insertAdminInfo(Admin admin) {

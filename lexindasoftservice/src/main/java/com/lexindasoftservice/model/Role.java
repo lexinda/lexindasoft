@@ -6,13 +6,9 @@ public class Role {
 
 	private int id;
 
-	private int adminId;
-	
 	private String roleName;
 
-	private int levelId;
-	
-	private int parentId;
+	private String roleDesc;
 
 	private Date createTime;
 
@@ -24,14 +20,6 @@ public class Role {
 		this.id = id;
 	}
 
-	public int getAdminId() {
-		return adminId;
-	}
-
-	public void setAdminId(int adminId) {
-		this.adminId = adminId;
-	}
-
 	public String getRoleName() {
 		return roleName;
 	}
@@ -40,20 +28,12 @@ public class Role {
 		this.roleName = roleName;
 	}
 
-	public int getLevelId() {
-		return levelId;
+	public String getRoleDesc() {
+		return roleDesc;
 	}
 
-	public void setLevelId(int levelId) {
-		this.levelId = levelId;
-	}
-
-	public int getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(int parentId) {
-		this.parentId = parentId;
+	public void setRoleDesc(String roleDesc) {
+		this.roleDesc = roleDesc;
 	}
 
 	public Date getCreateTime() {
@@ -66,9 +46,8 @@ public class Role {
 
 	@Override
 	public String toString() {
-		return "Role [id=" + id + ", adminId=" + adminId + ", roleName="
-				+ roleName + ", levelId=" + levelId + ", parentId=" + parentId
-				+ ", createTime=" + createTime + "]";
+		return "Role [id=" + id + ", roleName=" + roleName + ", roleDesc="
+				+ roleDesc + ", createTime=" + createTime + "]";
 	}
-	
+
 }

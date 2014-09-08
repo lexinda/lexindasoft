@@ -1,0 +1,15 @@
+package com.lexindasoftservice.service;
+
+import java.util.List;
+
+import com.lexindasoftservice.model.Admin;
+import com.lexindasoftservice.model.Department;
+import com.lexindasoftservice.model.Role;
+
+public interface DepartmentService {
+	
+	public List<Department> getDepartmentInfo(Department department);
+	
+	public int insertDepartmentInfo(Department department);
+	
+}

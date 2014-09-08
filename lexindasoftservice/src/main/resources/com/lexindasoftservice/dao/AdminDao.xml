@@ -8,23 +8,29 @@
 			account,
 			password,
 			name,
+			email,
+			phone,
 			status,
+			init_password as initPassword,
+			is_initpwd as isInitpwd,
+			birth_day as birthDay,
+			update_pwdtime as updatePwdtime,
 			create_time as createTime,
 			update_time as updateTime
 		FROM admin
 		WHERE id = #{id}
 	</select>
 	
-	<update id="updateAdminIndo" parameterType="Admin">
+	<update id="updateAdminInfo" parameterType="Admin">
 		UPDATE admin SET name = #{name},
-		account = #{account}, password = #{password}, status = #{status}, update_time = now() 
+		account = #{account},phone=#{phone},birth_day=#{birthDay},email = #{email}, status = #{status}, update_time = now() 
 		WHERE id = #{id}
 	</update>
 	
 	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
 	<insert id="insertAdminInfo" parameterType="Admin" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO admin(name, account, password, status, create_time, update_time)
-		VALUES(#{name}, #{account}, #{password}, #{status}, now(), now())
+		INSERT INTO admin(name, account, password,email,phone, status,init_password,is_initpwd,birth_day,update_pwdtime, create_time, update_time)
+		VALUES(#{name}, #{account}, #{password},#{email},#{phone},#{status},#{initPassword},0,#{birthDay},now(), now(), now())
 	</insert>
 	
 	<!-- 根据id删除系统管理员信息 -->
@@ -37,7 +43,13 @@
 			account,
 			password,
 			name,
+			email,
+			phone,
 			status,
+			init_password as initPassword,
+			is_initpwd as isInitpwd,
+			birth_day as birthDay,
+			update_pwdtime as updatePwdtime,
 			create_time as createTime,
 			update_time as updateTime
 		FROM admin
@@ -47,6 +59,9 @@
 	<update id="updatePwd" parameterType="Admin">
 		UPDATE admin SET 
 		password = #{password},
+		init_password=null,
+		is_initpwd=1,
+		update_pwdtime=now(),
 	    update_time = now() 
 		WHERE id = #{id}
 	</update>
@@ -57,7 +72,13 @@
 			account,
 			password,
 			name,
+			email,
+			phone,
 			status,
+			init_password as initPassword,
+			is_initpwd as isInitpwd,
+			birth_day as birthDay,
+			update_pwdtime as updatePwdtime,
 			create_time as createTime,
 			update_time as updateTime
 		FROM `admin`

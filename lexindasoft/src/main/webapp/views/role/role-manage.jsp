@@ -31,6 +31,7 @@
 		<thead>
 			<tr>
 				<th>角色名</th>
+				<th>角色描述</th>
 				<th>创建时间</th>
 				<th>操作</th>
 			</tr>
@@ -39,6 +40,7 @@
 			<c:forEach items="${roleList}" var="role">
 				<tr target="user" rel="${role.id}">
 					<td>${role.roleName}</td>
+					<td>${role.roleDesc}</td>
 					<td>${role.createTime}</td>
 					<td>
 						<a title="编辑" target="navTab" href="/validate/role/edit?id=${role.id}" class="btnEdit">编辑</a>

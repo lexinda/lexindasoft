@@ -2,6 +2,7 @@ package com.lexindasoft.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,44 +18,43 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.lexindasoftservice.model.Admin;
+import com.lexindasoftservice.model.Department;
 import com.lexindasoftservice.model.Role;
+import com.lexindasoftservice.service.DepartmentService;
 import com.lexindasoftservice.service.RoleService;
 
 @Controller
-@RequestMapping(value="/validate/role")
-public class RoleController {
+@RequestMapping(value="/validate/department")
+public class DepartmentController {
 
 	final static int PAGE_NUM=20;
 	
 	@Autowired
-	RoleService roleService;
+	DepartmentService departmentService;
 	
 	@RequestMapping(value="/manage",method = RequestMethod.GET)
-	public ModelAndView roleManage(){
+	public ModelAndView departmentManage(){
 		ModelAndView mav = new ModelAndView();
-		Role role = new Role();
-		List<Role> roleList = roleService.getRoleInfo(role);
-		mav.addObject("roleList", roleList);
-		mav.setViewName("role/role-manage");
+		mav.setViewName("department/department-manage");
 		return mav;
 	}
 	
 	@RequestMapping(value="/add",method = RequestMethod.GET)
-	public ModelAndView adminAdd(){
+	public ModelAndView departmentAdd(){
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("role/role-add");
+		mav.setViewName("department/department-add");
 		return mav;
 	}
 	
 	@RequestMapping()
-	public ModelAndView roleAdmin(){
+	public ModelAndView departmentAdmin(){
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("role/role-admin");
+		mav.setViewName("department/department-admin");
 		return mav;
 	}
 	
 	@RequestMapping(value="/doadd",method = RequestMethod.POST)
-	public void roleDoAdd(HttpServletResponse resp){
+	public void departmentDoAdd(HttpServletResponse resp){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("statusCode", 200);
 		jsonMap.put("message", "新增成功!");
@@ -77,6 +77,19 @@ public class RoleController {
        } catch (IOException e) {  
             e.printStackTrace();  
        }
+	}
+	
+	@RequestMapping(value="/find",method = RequestMethod.GET)
+	public ModelAndView departmentFind(){
+		ModelAndView mav = new ModelAndView();
+		Department department = new Department();
+		List<Department> departmentList = departmentService.getDepartmentInfo(department);
+		List<Integer> groupList = new ArrayList<Integer>();
+		for(Department departments : departmentList){
+			
+		}
+		mav.setViewName("department/department-find");
+		return mav;
 	}
 	
 }

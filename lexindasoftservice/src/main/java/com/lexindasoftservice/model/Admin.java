@@ -11,10 +11,20 @@ public class Admin {
 	private String account;
 	
 	private String password;
+	
+	private String phone;
 
 	private String email;
 
 	private int status;
+	
+	private String initPassword;
+	
+	private Date updatePwdtime;
+	
+	private int is_initpwd;
+	
+	private Date birthDay;
 
 	private Date createTime;
 	
@@ -104,12 +114,55 @@ public class Admin {
 		this.pageNum = pageNum;
 	}
 
+	public String getInitPassword() {
+		return initPassword;
+	}
+
+	public void setInitPassword(String initPassword) {
+		this.initPassword = initPassword;
+	}
+
+	public Date getUpdatePwdtime() {
+		return updatePwdtime;
+	}
+
+	public void setUpdatePwdtime(Date updatePwdtime) {
+		this.updatePwdtime = updatePwdtime;
+	}
+
+	public int getIs_initpwd() {
+		return is_initpwd;
+	}
+
+	public void setIs_initpwd(int is_initpwd) {
+		this.is_initpwd = is_initpwd;
+	}
+
+	public Date getBirthDay() {
+		return birthDay;
+	}
+
+	public void setBirthDay(Date birthDay) {
+		this.birthDay = birthDay;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	@Override
 	public String toString() {
 		return "Admin [id=" + id + ", name=" + name + ", account=" + account
-				+ ", password=" + password + ", email=" + email + ", status="
-				+ status + ", createTime=" + createTime + ", updateTime="
-				+ updateTime + ", page=" + page + ", pageNum=" + pageNum + "]";
+				+ ", password=" + password + ", phone=" + phone + ", email="
+				+ email + ", status=" + status + ", initPassword="
+				+ initPassword + ", updatePwdtime=" + updatePwdtime
+				+ ", is_initpwd=" + is_initpwd + ", birthDay=" + birthDay
+				+ ", createTime=" + createTime + ", updateTime=" + updateTime
+				+ ", page=" + page + ", pageNum=" + pageNum + "]";
 	}
 
 }

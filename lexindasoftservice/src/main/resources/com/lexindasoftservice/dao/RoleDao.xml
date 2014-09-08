@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lexindasoftservice.dao.RoleDao">
+
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="getRoleInfo" parameterType="Role" resultType="Role">
+		SELECT id,
+			role_name as roleName,
+			role_desc as roleDesc,
+			create_time as createTime
+		FROM `role`
+		WHERE 1=1
+		<if test="id != 0">
+			and id =#{id}
+		</if>
+		<if test="roleName != null">
+			and role_name like CONCAT('%',#{roleName},'%')
+		</if>
+	</select>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<insert id="insertRoleInfo" parameterType="Role" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `role`(role_name, role_desc, create_time)
+		VALUES(#{roleName}, #{roleDesc}, now())
+	</insert>
+	
+</mapper>  

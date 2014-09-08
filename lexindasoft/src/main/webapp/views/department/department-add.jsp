@@ -10,23 +10,21 @@
 </head>
 <body>
 	<div  class="pageContent">
-		<form action="/validate/admin/doadd" method="post" class="pageForm required-validate" onsubmit="return validateCallback(this,navTabAjaxDone);">
+		<form action="/validate/department/doadd" method="post" class="pageForm required-validate" onsubmit="return validateCallback(this,navTabAjaxDone);">
 			<div class="pageFormContent" layoutH="56">
 				<p>
-					<label>姓名：</label>
-					<input name="name" type="text" size="30" value="" class="required"/>
+					<label>部门名称：</label>
+					<input name="departmentName" type="text" size="30" value="" class="required"/>
 				</p>
 				<p>
-					<label>电话：</label>
-					<input name="phone" type="text" size="30" value="" class="required phone"/>
+					<label>所属机构：</label>
+					<input class="required" name="district.id" type="hidden" readonly/>
+					<input class="required" name="district.districtName" type="text" readonly/>
+					<a class="btnLook" href="/validate/department/find" lookupGroup="district">请选择</a>	
 				</p>
 				<p>
-					<label>出生日期：</label>
-					<input type="text" name="birthday" class="date" size="30" /><a class="inputDateButton" href="javascript:;">选择</a>
-				</p>
-				<p>
-					<label>邮箱：</label>
-					<input name="email" type="text" size="30" value="" class="required email"/>
+					<label>部门描述：</label>
+					<textarea name="departmentDesc" cols="40" rows="5"></textarea>
 				</p>
 			</div>
 			<div class="formBar">

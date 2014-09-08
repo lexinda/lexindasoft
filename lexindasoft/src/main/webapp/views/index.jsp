@@ -219,7 +219,9 @@ $(function(){
 						<ul class="tree treeFolder">
 							<li><a href="/validate/admin/manage" target="navTab" rel="user">用户管理</a></li>
 							<li><a href="/validate/role/manage" target="navTab" rel="role">角色管理</a></li>
-							<li><a href="/menu/manage" target="navTab" rel="menu">菜单管理</a></li>
+							<li><a href="/validate/department/manage" target="navTab" rel="department">部门管理</a></li>
+							<li><a href="/validate/menu/manage" target="navTab" rel="menu">菜单管理</a></li>
+							<li><a href="/validate/admin/changepwd" target="navTab" rel="pwd">修改密码</a></li>
 						</ul>
 					</div>
 					<div class="accordionHeader">
