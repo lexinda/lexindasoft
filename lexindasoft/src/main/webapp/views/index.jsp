@@ -1,5 +1,6 @@
 <%@ page pageEncoding= "UTF-8" %>
 <%@ page contentType= "text/html; charset=UTF-8" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix ="c" %>
 <%@ taglib uri= "http://java.sun.com/jsp/jstl/fmt" prefix ="fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -183,6 +184,7 @@
                 </ul>
             </div>
             <div title="内容管理" iconcls="icon-reload" style="padding: 10px;">
+            <sec:authentication property="name"/>
             </div>
             <div title="系统管理" iconcls="icon-large-clipart" selected="true">
                 <ul class="easyui-tree">

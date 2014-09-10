@@ -56,7 +56,22 @@ public class HomeController {
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView goLogin(HttpServletRequest req){
 		ModelAndView mav = new ModelAndView();
+		//mav.setViewName("index");
+		mav.setViewName("login");
+        return mav;	
+	}
+	
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public ModelAndView goIndex(HttpServletRequest req){
+		ModelAndView mav = new ModelAndView();
 		mav.setViewName("index");
+        return mav;	
+	}
+	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public ModelAndView goTest(HttpServletRequest req){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("test");
 		//mav.setViewName("login");
         return mav;	
 	}
