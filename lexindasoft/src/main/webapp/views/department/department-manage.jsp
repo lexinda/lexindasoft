@@ -5,126 +5,69 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>用户管理</title>
-<link href="../dwz/themes/css/vsStyle/jquery.treeTable.css" rel="stylesheet" type="text/css" media="screen"/>
-<script src="../dwz/js/jquery.treeTable.js" type="text/javascript"></script>
-<style type="text/css">
-	.treetable { border:1px solid #ededed;
-				width: 100%;
-				}
-	.treetable th{
-				background:url(../dwz/themes/default/images/grid/tableth.png) repeat-x;
-				border-left-color:#EEE; border-right-color:#d0d0d0;
-				}
-	.treetable td,.treetable th{ 
-				border:1px solid #ededed; 
-				padding:0 1em 0; 
-				height: 20px;
-				}
-	.treetable tr.alter{ 
-				background-color:#f5fafe; 
-				}
-</style>
-<script type="text/javascript">
-	$(function(){
-	    var option = {
-	        theme:'vsStyle',
-	        expandLevel : 2,
-	        beforeExpand : function($treeTable, id) {
-	            //判断id是否已经有了孩子节点，如果有了就不再加载，这样就可以起到缓存的作用
-	            if ($('.' + id, $treeTable).length) { return; }
-	            //这里的html可以是ajax请求
-	            var html = '<tr id="8" pId="6"><td>5.1</td><td>可以是ajax请求来的内容</td></tr>'
-	                     + '<tr id="9" pId="6"><td>5.2</td><td>动态的内容</td></tr>';
-	
-	            $treeTable.addChilds(html);
-	        },
-	        onSelect : function($treeTable, id) {
-	            window.console && console.log('onSelect:' + id);
-	            
-	        }
-	
-	    };
-	    $('#treeTable1').treeTable(option);
-	});
-</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>组织结构管理</title>
+	<script src="../ui/jquery.min.js" type="text/javascript"></script>
+    <script src="../ui/jquery.easyui.min.js" type="text/javascript"></script>
+    <link href="../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+    	$(function(){
+    		 $('#tt').treegrid({  
+ 			    url:'/department/data?id=1',  
+ 			 	idField:'id',
+ 			 	title:'组织机构',
+ 			 	iconCls:'icon-save',
+ 			 	toolbar:'#tb',
+ 			 	fit:'true',
+ 			    treeField:'departmentName',  
+ 			    columns:[[  
+ 			        {title:'机构名称',field:'departmentName',width:'30%'},  
+ 			        {field:'departmentDesc',title:'机构描述',width:'30%'},  
+ 			       	{field:'action',title:'操作',width:'30%',align:'center',
+ 						formatter:function(value,row,index){
+ 								var a = '<a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="editrow(this)">新增</a> ';
+ 								var e = '<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editrow(this)">编辑</a> ';
+ 								var d = '<a href="#" class="easyui-linkbutton" iconCls="icon-delete" plain="true" onclick="deleterow(this)">删除</a>';
+ 								return a+e+d;
+ 						}
+ 					}
+ 			    ]],
+ 			   onBeforeExpand:function(row){
+ 		    		var url = '/department/data?id='+row.id; 
+ 		    		$('#tt').treegrid('options').url = url; 
+ 		    		return true; 
+ 		    	}
+ 			});  
+    	});
+    	function getRowIndex(target){
+    		var tr = $(target).closest('tr.datagrid-row');
+    		return parseInt(tr.attr('datagrid-row-index'));
+    	}
+    	function editrow(target){
+    		$('#tt').treegrid('beginEdit', getRowIndex(target));
+    	}
+    </script>
 </head>
 <body>
-<div class="pageHeader">
-	<form action="/admin/search" method="post">
-	<div class="searchBar">
-		<table class="searchContent">
-			<tr><td>用户名：<input type="text" name="account"/><button type="submit">查询</button></td></tr>
-		</table>
+	<div id="tb" style="padding:5px;height:auto">
+		<div style="margin-bottom:5px">
+			Date From: <input class="easyui-datebox" style="width:80px">
+			To: <input class="easyui-datebox" style="width:80px">
+			Language: 
+			<input class="easyui-combobox" style="width:100px"
+					url="data/combobox_data.json"
+					valueField="id" textField="text">
+			<a href="#" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+		</div>
+		<!-- <div>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true">新增机构</a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true"></a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true"></a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-cut" plain="true"></a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true"></a>
+		</div> -->
 	</div>
-	</form>
-</div>
-<div class="pageContent">
-	<div class="panelBar">
-		<ul class="toolBar">
-			<li><a class="add" href="/validate/department/add" target="navTab"><span>新增用户</span></a></li>
-			<li><a title="是否批量删除?" target="selectedTodo" rel="ids" postType="string" href="/validate/admin/delete" class="delete"><span>批量删除</span></a></li>
-			<li class="line">line</li>
-			<li><a class="icon" href="/admin/excel" target="dwzExport" targetType="navTab" title="是否确定导出！"><span>导出Excel数据</span></a></li>
-		</ul>
-	</div>
-	<table id="treeTable1" class="treetable">
-		<thead>
-			<tr onmouseover="style.backgroundColor='#ededed'" onmouseout="style.backgroundColor='#FFFFFF'">
-                    <th style="width: 200px;">
-                        部门</th>
-                    <th>
-                        描述</th>
-                    <th>
-                        操作</th>
-                </tr>
-		</thead>
-		<tbody>
-			<tr id="1" onmouseover="style.backgroundColor='#e9f0f2'" onmouseout="style.backgroundColor='#FFFFFF'">
-                    <td>
-                        <span controller="true">1</span></td>
-                    <td>
-                        内容</td>
-                </tr>
-                <tr id="2" pid="1" onmouseover="style.backgroundColor='#e9f0f2'" onmouseout="style.backgroundColor='#FFFFFF'">
-                    <td>
-                        <span controller="true">2</span></td>
-                    <td>
-                        内容</td>
-                </tr>
-                <tr id="3" pid="2" onmouseover="style.backgroundColor='#e9f0f2'" onmouseout="style.backgroundColor='#FFFFFF'">
-                    <td>
-                        3</td>
-                    <td>
-                        内容</td>
-                </tr>
-                <tr id="4" pid="2" onmouseover="style.backgroundColor='#e9f0f2'" onmouseout="style.backgroundColor='#FFFFFF'">
-                    <td>
-                        4</td>
-                    <td>
-                        内容</td>
-                </tr>
-                <tr id="5" pid="4" onmouseover="style.backgroundColor='#e9f0f2'" onmouseout="style.backgroundColor='#FFFFFF'">
-                    <td>
-                        4.1</td>
-                    <td>
-                        内容</td>
-                </tr>
-                <tr id="6" pid="1" haschild="true" onmouseover="style.backgroundColor='#e9f0f2'" onmouseout="style.backgroundColor='#FFFFFF'">
-                    <td>
-                        5</td>
-                    <td>
-                        注意这个节点是动态加载的</td>
-                </tr>
-                <tr id="7" onmouseover="style.backgroundColor='#e9f0f2'" onmouseout="style.backgroundColor='#FFFFFF'">
-                    <td>
-                        8</td>
-                    <td>
-                        内容</td>
-                </tr>
-		</tbody>
-     </table>
-</div>
+	<table id="tt"></table>
 </body>
 </html>

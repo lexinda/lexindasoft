@@ -10,6 +10,10 @@ public interface DepartmentService {
 	
 	public List<Department> getDepartmentInfo(Department department);
 	
+	public List<Department> hasChildDepartmentInfo(Department department);
+	
+	public List<Integer> getDepartmentLevel();
+	
 	public int insertDepartmentInfo(Department department);
 	
 }

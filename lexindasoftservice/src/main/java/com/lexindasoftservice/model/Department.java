@@ -9,6 +9,7 @@ public class Department {
 	private int levelId;
 	private String departmentDesc;
 	private Date Create_time;
+	private String state;
 	public int getId() {
 		return id;
 	}
@@ -45,12 +46,19 @@ public class Department {
 	public void setCreate_time(Date create_time) {
 		Create_time = create_time;
 	}
+	
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
 	@Override
 	public String toString() {
 		return "Department [id=" + id + ", departmentName=" + departmentName
 				+ ", parentId=" + parentId + ", levelId=" + levelId
 				+ ", departmentDesc=" + departmentDesc + ", Create_time="
-				+ Create_time + "]";
+				+ Create_time + ", state=" + state + "]";
 	}
 	
 }

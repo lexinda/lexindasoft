@@ -1,5 +1,11 @@
 package com.lexindasoft.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -14,10 +20,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.lexindasoft.utils.UserUtils;
 import com.lexindasoftservice.model.Admin;
+import com.lexindasoftservice.model.Department;
 import com.lexindasoftservice.service.AdminService;
-import com.lexindasoftservice.utils.Inputs;
+import com.lexindasoftservice.service.DepartmentService;
 import com.lexindasoftservice.utils.Md5Util;
 
 
@@ -27,6 +35,9 @@ public class HomeController {
 	
 	@Autowired
 	AdminService adminService;
+	
+	@Autowired
+	DepartmentService departmentService;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView getUserInfo(HttpServletRequest req,HttpServletResponse resp,Model model){
@@ -45,7 +56,8 @@ public class HomeController {
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView goLogin(HttpServletRequest req){
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("login");
+		mav.setViewName("index");
+		//mav.setViewName("login");
         return mav;	
 	}
 	

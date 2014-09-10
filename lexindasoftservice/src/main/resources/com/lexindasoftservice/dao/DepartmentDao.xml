@@ -11,13 +11,25 @@
 			department_desc as departmentDesc,
 			create_time as createTime
 		FROM `department`
+		WHERE 1=1 and parent_id=#{id}
+	</select>
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="hasChildDepartmentInfo" parameterType="Department" resultType="Department">
+		SELECT id,
+			department_name as departmentName,
+			parent_id as parentId,
+			level_id as levelId,
+			department_desc as departmentDesc,
+			create_time as createTime
+		FROM `department`
+		WHERE 1=1 and parent_id=#{id}
+	</select>
+	
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="getDepartmentLevel" resultType="int">
+		SELECT distinct level_id 
+		FROM `department`
 		WHERE 1=1
-		<if test="id != 0">
-			and id =#{id}
-		</if>
-		<if test="departmentName != null">
-			and department_name like CONCAT('%',#{departmentName},'%')
-		</if>
 	</select>
 	
 	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
