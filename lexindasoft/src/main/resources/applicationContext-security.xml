@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:sec="http://www.springframework.org/schema/security"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+        http://www.springframework.org/schema/security  
+        http://www.springframework.org/schema/security/spring-security-3.1.xsd">  
+  
+    <!-- 配置不过滤的资源（静态资源及登录相关） -->  
+    <sec:http pattern="/js/**" security="none"/> 
+    <sec:http pattern="/css/**" security="none"/> 
+    <sec:http pattern="/images/**" security="none"/>
+    <sec:http pattern="/ui/**" security="none"></sec:http>  
+      
+    <sec:http pattern="/login" security="none"></sec:http>  
+    
+    <sec:http auto-config="true" use-expressions="true">  
+          
+        <sec:intercept-url pattern="/validate/*" access="hasRole('ROLE_ADMIN')"/>  
+        
+        <!-- 设置登录过滤器 -->
+		<sec:custom-filter before="FORM_LOGIN_FILTER" ref="validateCodeAuthenticationFilter" />
+        
+        <sec:form-login login-page="/login" authentication-failure-url="/login"  
+        default-target-url="/validate/index"/> 
+        
+        <sec:session-management invalid-session-url="/timeout">  
+	        <sec:concurrency-control max-sessions="1"  
+	            error-if-maximum-exceeded="false"/>  
+	    </sec:session-management>    
+	    
+    </sec:http>  
+      
+    <sec:authentication-manager alias="authenticationManager">  
+        <sec:authentication-provider user-service-ref="userDetailsService">  
+             <sec:password-encoder hash="md5" /> 
+        </sec:authentication-provider>  
+    </sec:authentication-manager>  
+  
+    <!-- 验证码过滤器 -->
+	<bean id="validateCodeAuthenticationFilter"
+		class="com.lexindasoft.interceptor.ValidateCodeUsernamePasswordAuthenticationFilter">
+		<property name="authenticationSuccessHandler"
+			ref="loginLogAuthenticationSuccessHandler"></property>
+		<property name="authenticationFailureHandler"
+			ref="simpleUrlAuthenticationFailureHandler"></property>
+		<property name="authenticationManager" ref="authenticationManager"></property>
+	</bean>
+	
+	<!-- 登录成功 -->
+	<bean id="loginLogAuthenticationSuccessHandler"
+		class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<property name="defaultTargetUrl" value="/validate/index"></property>
+	</bean>
+
+	<!-- 登录失败 -->
+	<bean id="simpleUrlAuthenticationFailureHandler"
+		class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+		<property name="defaultFailureUrl" value="/login"></property>
+	</bean>
+	
+	<!-- 项目实现的用户查询服务 -->  
+    <bean id="userDetailsService" class="com.lexindasoftservice.service.UserDetailsServiceImpl" />  
+</beans>

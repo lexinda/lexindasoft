@@ -1,14 +1,20 @@
 package com.lexindasoftservice.model;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 
-public class Admin {
+import org.springframework.security.core.GrantedAuthority;
 
+public class Admin implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	
 	private int id;
 
 	private String name;
 
-	private String account;
+	private String username;
 	
 	private String password;
 	
@@ -29,11 +35,11 @@ public class Admin {
 	private Date createTime;
 	
 	private Date updateTime;
-
+	
 	private int page;
 	
 	private int pageNum;
-	
+
 	public int getId() {
 		return id;
 	}
@@ -50,12 +56,12 @@ public class Admin {
 		this.name = name;
 	}
 
-	public String getAccount() {
-		return account;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setAccount(String account) {
-		this.account = account;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {
@@ -66,12 +72,12 @@ public class Admin {
 		this.password = password;
 	}
 
-	public Date getUpdateTime() {
-		return updateTime;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public String getEmail() {
@@ -88,30 +94,6 @@ public class Admin {
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
-	public int getPageNum() {
-		return pageNum;
-	}
-
-	public void setPageNum(int pageNum) {
-		this.pageNum = pageNum;
 	}
 
 	public String getInitPassword() {
@@ -146,17 +128,41 @@ public class Admin {
 		this.birthDay = birthDay;
 	}
 
-	public String getPhone() {
-		return phone;
+	public Date getCreateTime() {
+		return createTime;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getPageNum() {
+		return pageNum;
+	}
+
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
 	}
 
 	@Override
 	public String toString() {
-		return "Admin [id=" + id + ", name=" + name + ", account=" + account
+		return "Admin [id=" + id + ", name=" + name + ", username=" + username
 				+ ", password=" + password + ", phone=" + phone + ", email="
 				+ email + ", status=" + status + ", initPassword="
 				+ initPassword + ", updatePwdtime=" + updatePwdtime
@@ -164,5 +170,5 @@ public class Admin {
 				+ ", createTime=" + createTime + ", updateTime=" + updateTime
 				+ ", page=" + page + ", pageNum=" + pageNum + "]";
 	}
-
+	
 }

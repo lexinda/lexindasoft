@@ -11,6 +11,8 @@ public interface AdminDao {
 
 	public Admin getAdminById(int id);
 	
+	public Admin getAdminByAccount(String account);
+	
 	public int updateAdminInfo(Admin admin);
 	
 	public int insertAdminInfo(Admin admin);

@@ -156,7 +156,7 @@ public class AdminController {
 		Admin admin = adminService.getAdminById(id);
 		admin.setName(name);
 		admin.setBirthDay(birthDay);
-		admin.setAccount(email);
+		admin.setUsername(email);
 		admin.setEmail(email);;
 		admin.setPhone(phone);
 		int result = adminService.updateAdminInfo(admin);
@@ -226,7 +226,7 @@ public class AdminController {
 			int is_initpwd,Date birthDay,int page,int pageNum){
 		Admin admin = new Admin();
 		admin.setName(name);
-		admin.setAccount(account);
+		admin.setUsername(account);
 		admin.setPassword(password);
 		admin.setEmail(email);
 		admin.setPhone(phone);

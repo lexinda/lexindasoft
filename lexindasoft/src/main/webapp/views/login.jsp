@@ -18,13 +18,6 @@
   	verify.setAttribute('src','/views/makeCertPic.jsp?it='+Math.random());
   }
   $(function(){
-	  $("#error").text("");
-	  if("${error}" == 1){
-		  $("#error").text("验证码错误！");
-	  }
-	  if("${error}" == 2){
-		  $("#error").text("用户名或密码错误！");
-	  }
   });
   
   $("#submitBtn").live("click", function(){
@@ -70,15 +63,15 @@
 		</div>
 		<div id="login_content">
 			<div class="loginForm">
-				<form action="/login" id="loginForm" method="post">
-					<span id="error" style="color:red;margin-left: 80px;"></span>
+				<form action="/j_spring_security_check" id="loginForm" method="post">
+					<span id="error" style="color:red;margin-left: 80px;">${SPRING_SECURITY_LAST_EXCEPTION.message}  </span>
 					<p>
 						<label>用户名：</label>
-						<input type="text" id="username" name="username" size="20" class="login_input" />
+						<input type="text" id="username" name="j_username" size="20" class="login_input" value="${SPRING_SECURITY_LAST_USERNAME}" />
 					</p>
 					<p>
 						<label>密码：</label>
-						<input type="password" id="password" name="password" size="20" class="login_input" />
+						<input type="password" id="password" name="j_password" size="20" class="login_input" />
 					</p>
 					<p>
 						<label>验证码：</label>
