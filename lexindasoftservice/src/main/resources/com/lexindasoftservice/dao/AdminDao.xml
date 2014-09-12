@@ -22,7 +22,7 @@
 	</select>
 	
 	<!-- 根据id获取系统管理员信息 -->
-	<select id="getAdminByAccount" parameterType="String" resultType="Admin">
+	<select id="getAdminByUserName" parameterType="String" resultType="Admin">
 		SELECT id,
 			username,
 			password,

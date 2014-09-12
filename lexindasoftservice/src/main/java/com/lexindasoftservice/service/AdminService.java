@@ -10,6 +10,8 @@ public interface AdminService {
 	
 	public Admin getAdminById(int id);
 	
+	public Admin getAdminByUserName(String name);
+	
 	public int updateAdminInfo(Admin admin);
 	
 	public int insertAdminInfo(Admin admin);

@@ -44,6 +44,11 @@ public class AdminServiceImpl implements AdminService {
 		return adminDao.getAllAdminList(admin);
 	}
 
+	public Admin getAdminByUserName(String name) {
+		// TODO Auto-generated method stub
+		return adminDao.getAdminByUserName(name);
+	}
+
 	
 	
 }
