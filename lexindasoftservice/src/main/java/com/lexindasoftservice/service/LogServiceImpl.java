@@ -3,11 +3,12 @@ package com.lexindasoftservice.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lexindasoftservice.model.Admin;
 import com.lexindasoftservice.model.Log;
-
+@Service
 public class LogServiceImpl implements LogService {
 
 	@Autowired

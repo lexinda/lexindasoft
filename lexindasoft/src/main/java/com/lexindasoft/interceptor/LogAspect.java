@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -25,6 +26,12 @@ public class LogAspect {
     private LogService logService;//日志记录Service  
       
     /** 
+     * 添加访问页面切入点 
+     */  
+    @Pointcut("execution(* com.lexindasoftservice.service.*.getDepartmentInfo*(..))")  
+    public void manageServiceCall() { } 
+    
+    /** 
      * 添加业务逻辑方法切入点 
      */  
     @Pointcut("execution(* com.xxx.service.*.insert*(..))")  
@@ -41,7 +48,45 @@ public class LogAspect {
      */  
     @Pointcut("execution(* com.xxx.service.*.delete(..))")  
     public void deleteServiceCall() { }  
-      
+    
+    /** 
+     * 访问页面日志(后置通知) 
+     * @param joinPoint 
+     * @param rtv 
+     * @throws Throwable 
+     */  
+    @AfterReturning(value="manageServiceCall()", argNames="rtv", returning="rtv")  
+    public void manageServiceCallCalls(JoinPoint joinPoint, Object rtv) throws Throwable{  
+          
+        //获取登录管理员id  
+        int adminUserId = logService.loginUserId();  
+          
+        if(adminUserId == 0){//没有管理员登录  
+            return;  
+        }  
+          
+        //判断参数  
+        if(joinPoint.getArgs() == null){//没有参数  
+            return;  
+        }  
+          
+        //获取方法名  
+        String methodName = joinPoint.getSignature().getName();  
+          
+        //获取操作内容  
+        String opContent = adminOptionContent(joinPoint.getArgs(), methodName);  
+          
+        //创建日志对象  
+        Log log = new Log();  
+        log.setUserid(logService.loginUserId());//设置管理员id  
+        log.setCreatedate(new Date());//操作时间  
+        log.setContent(opContent);//操作内容  
+        //1:添加，2.更新，3.删除
+        log.setOperation(1);//操作  
+          
+        logService.log(log);//添加日志  
+    }  
+    
     /** 
      * 管理员添加操作日志(后置通知) 
      * @param joinPoint 
@@ -124,7 +169,7 @@ public class LogAspect {
      * @param rtv 
      * @throws Throwable 
      */  
-    @Around(value="deleteServiceCall()", argNames="rtv")  
+    @AfterReturning(value="deleteServiceCall()", argNames="rtv", returning="rtv")
     public void deleteServiceCallCalls(JoinPoint joinPoint, Object rtv) throws Throwable {  
     	//获取登录管理员id  
         int adminUserId = logService.loginUserId();  
@@ -156,6 +201,19 @@ public class LogAspect {
               
     }  
       
+    @Around("execution(* org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(..))")  
+    public Object aa(ProceedingJoinPoint pjp)  throws Throwable   
+    {  
+        try {  
+            Object retVal = pjp.proceed();  
+            System.out.println(retVal);  
+            return retVal;  
+        } catch (Exception e) {  
+            System.out.println("异常");  
+            return null;  
+        }  
+    }  
+    
     /** 
      * 使用Java反射来获取被拦截方法(insert、update)的参数值， 
      * 将参数值拼接为操作内容 
