@@ -5,7 +5,7 @@
 	<!-- 根据id获取系统管理员信息 -->
 	<select id="getAdminById" parameterType="int" resultType="Admin">
 		SELECT id,
-			account,
+			username,
 			password,
 			name,
 			email,
@@ -21,26 +21,10 @@
 		WHERE id = #{id}
 	</select>
 	
-	<update id="updateAdminInfo" parameterType="Admin">
-		UPDATE admin SET name = #{name},
-		account = #{account},phone=#{phone},birth_day=#{birthDay},email = #{email}, status = #{status}, update_time = now() 
-		WHERE id = #{id}
-	</update>
-	
-	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
-	<insert id="insertAdminInfo" parameterType="Admin" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO admin(name, account, password,email,phone, status,init_password,is_initpwd,birth_day,update_pwdtime, create_time, update_time)
-		VALUES(#{name}, #{account}, #{password},#{email},#{phone},#{status},#{initPassword},0,#{birthDay},now(), now(), now())
-	</insert>
-	
-	<!-- 根据id删除系统管理员信息 -->
-	<delete id="deleteAdminInfo" parameterType="String" >
-	   DELETE FROM admin WHERE id in (#{id})
-	</delete>
 	<!-- 根据id获取系统管理员信息 -->
-	<select id="login" parameterType="Admin" resultType="Admin">
+	<select id="getAdminByUserName" parameterType="String" resultType="Admin">
 		SELECT id,
-			account,
+			username,
 			password,
 			name,
 			email,
@@ -53,7 +37,42 @@
 			create_time as createTime,
 			update_time as updateTime
 		FROM admin
-		WHERE account=#{account} and password=#{password}
+		WHERE username = #{username}
+	</select>
+	
+	<update id="updateAdminInfo" parameterType="Admin">
+		UPDATE admin SET name = #{name},
+		username = #{username},phone=#{phone},birth_day=#{birthDay},email = #{email}, status = #{status}, update_time = now() 
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<insert id="insertAdminInfo" parameterType="Admin" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO admin(name, username, password,email,phone, status,init_password,is_initpwd,birth_day,update_pwdtime, create_time, update_time)
+		VALUES(#{name}, #{username}, #{password},#{email},#{phone},#{status},#{initPassword},0,#{birthDay},now(), now(), now())
+	</insert>
+	
+	<!-- 根据id删除系统管理员信息 -->
+	<delete id="deleteAdminInfo" parameterType="String" >
+	   DELETE FROM admin WHERE id in (#{id})
+	</delete>
+	<!-- 根据id获取系统管理员信息 -->
+	<select id="login" parameterType="Admin" resultType="Admin">
+		SELECT id,
+			username,
+			password,
+			name,
+			email,
+			phone,
+			status,
+			init_password as initPassword,
+			is_initpwd as isInitpwd,
+			birth_day as birthDay,
+			update_pwdtime as updatePwdtime,
+			create_time as createTime,
+			update_time as updateTime
+		FROM admin
+		WHERE username=#{username} and password=#{password}
 	</select>
 	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
 	<update id="updatePwd" parameterType="Admin">
@@ -69,7 +88,7 @@
 	<!-- 根据id获取系统管理员信息 -->
 	<select id="getAllAdminList" parameterType="Admin" resultType="Admin">
 		SELECT id,
-			account,
+			username,
 			password,
 			name,
 			email,
@@ -83,8 +102,8 @@
 			update_time as updateTime
 		FROM `admin`
 		WHERE 1=1 
-		<if test="account != null">
-			and account like CONCAT('%',#{account},'%')
+		<if test="username != null">
+			and username like CONCAT('%',#{username},'%')
 		</if>
 		
 		<if test="page != -1">

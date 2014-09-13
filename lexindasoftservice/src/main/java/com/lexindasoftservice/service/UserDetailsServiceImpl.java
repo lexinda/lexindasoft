@@ -40,7 +40,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	  */  
 	 public UserDetails loadUserByUsername(String username)  
 	   throws UsernameNotFoundException, DataAccessException {  
-	  Admin admin = adminDao.getAdminByAccount(username);
+	  Admin admin = adminDao.getAdminByUserName(username);
 	  
 	  if (admin == null) {  
 	   throw new UsernameNotFoundException("用户" + username + " 不存在");  

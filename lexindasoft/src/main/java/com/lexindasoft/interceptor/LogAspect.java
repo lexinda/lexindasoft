@@ -3,6 +3,11 @@ package com.lexindasoft.interceptor;
 import java.lang.reflect.Method;
 import java.util.Date;
 
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.lexindasoftservice.model.Log;
@@ -119,7 +124,7 @@ public class LogAspect {
      * @param rtv 
      * @throws Throwable 
      */  
-    @Around(value="deleteServiceCall()", argNames="rtv", returning="rtv")  
+    @Around(value="deleteServiceCall()", argNames="rtv")  
     public void deleteServiceCallCalls(JoinPoint joinPoint, Object rtv) throws Throwable {  
     	//获取登录管理员id  
         int adminUserId = logService.loginUserId();  
