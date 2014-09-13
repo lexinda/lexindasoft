@@ -1,5 +1,7 @@
 package com.lexindasoftservice.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,4 +15,8 @@ public class LogMapperImpl implements LogMapper {
 	 public void insertLog(Log log){
 		 logMapperDao.insertLog(log);
 	 }
+	public List<Log> getLogList(Log log) {
+		// TODO Auto-generated method stub
+		return logMapperDao.getLogList(log);
+	}
 }

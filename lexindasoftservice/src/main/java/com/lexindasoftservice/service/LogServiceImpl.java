@@ -18,7 +18,6 @@ public class LogServiceImpl implements LogService {
 	@Transactional
 	public void log(Log log) {
 		// TODO Auto-generated method stub
-		
 		logMapper.insertLog(log);
 		
 	}

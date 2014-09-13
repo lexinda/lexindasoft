@@ -5,8 +5,17 @@
 	
 	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
 	<insert id="insertLog" parameterType="Log" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO log(userid, content,operation,createdate)
-		VALUES(#{userid}, #{content}, #{operation},now())
+		INSERT INTO log(userid, content,operation,logip,createdate)
+		VALUES(#{userid}, #{content}, #{operation},#{logip},now())
 	</insert>
+	
+	<select id="getLogList" parameterType="Log" resultType="Log">
+		select id,userid,content,operation,logip,createdate
+		from log
+		where 1=1 
+		<if test="page!=-1">
+			limit #{page},#{pageNum}
+		</if>
+	</select>
 
 </mapper>  

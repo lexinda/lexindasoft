@@ -9,7 +9,10 @@ public class Log implements Serializable {
 	    private int userid;//管理员id  
 	    private Date createdate;//日期  
 	    private String content;//日志内容  
-	    private int operation;//操作(主要是"添加"、"修改"、"删除")  
+	    private int operation;//操作(主要是"添加"、"修改"、"删除")
+	    private String logip;
+	    private int page;
+	    private int pageNum;
 		public int getId() {
 			return id;
 		}
@@ -39,6 +42,24 @@ public class Log implements Serializable {
 		}
 		public void setOperation(int operation) {
 			this.operation = operation;
+		}
+		public int getPage() {
+			return page;
+		}
+		public void setPage(int page) {
+			this.page = page;
+		}
+		public int getPageNum() {
+			return pageNum;
+		}
+		public void setPageNum(int pageNum) {
+			this.pageNum = pageNum;
+		}
+		public String getLogip() {
+			return logip;
+		}
+		public void setLogip(String logip) {
+			this.logip = logip;
 		}
 	    
 }

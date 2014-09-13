@@ -2,6 +2,10 @@ package com.lexindasoft.interceptor;
 
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,6 +15,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.lexindasoft.utils.ServletUtil;
 import com.lexindasoftservice.model.Log;
 import com.lexindasoftservice.service.LogService;
   
@@ -83,7 +88,10 @@ public class LogAspect {
         log.setContent(opContent);//操作内容  
         //1:添加，2.更新，3.删除
         log.setOperation(1);//操作  
-          
+        HttpServletRequest request = SysContext.getRequest();  
+        HttpServletResponse response = SysContext.getResponse(); 
+        String ip = ServletUtil.getClientRealIp(request);
+        log.setLogip(ServletUtil.getClientRealIp(request));
         logService.log(log);//添加日志  
     }  
     
