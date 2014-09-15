@@ -33,7 +33,7 @@ public class LogAspect {
     /** 
      * 添加访问页面切入点 
      */  
-    @Pointcut("execution(* com.lexindasoftservice.service.*.getDepartmentInfo*(..))")  
+    @Pointcut("execution(* com.lexindasoftservice.service.*.getMenu*(..))")  
     public void manageServiceCall() { } 
     
     /** 
@@ -87,7 +87,7 @@ public class LogAspect {
         log.setCreatedate(new Date());//操作时间  
         log.setContent(opContent);//操作内容  
         //1:添加，2.更新，3.删除
-        log.setOperation(1);//操作  
+        log.setOperation(4);//操作  
         HttpServletRequest request = SysContext.getRequest();  
         HttpServletResponse response = SysContext.getResponse(); 
         String ip = ServletUtil.getClientRealIp(request);

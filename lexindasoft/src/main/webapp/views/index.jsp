@@ -194,13 +194,16 @@
                 		 <span><a href="#">用户管理</a></span>
                 	</li>
                 	<li>
-                		<span><a target="mainFrame" href="/department/manage">组织机构管理</a></span>
+                		<span><a target="mainFrame" href="/validate/department/manage">组织机构管理</a></span>
                 	</li>
                 	<li>
                 		<span><a href="#">角色管理</a></span>
                 	</li>
                 	<li>
                 		<span><a href="#">菜单管理</a></span>
+                	</li>
+                	<li>
+                		<span><a target="mainFrame" href="/validate/log/manage">系统日志</a></span>
                 	</li>
                 </ul>
             </div>

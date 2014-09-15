@@ -36,6 +36,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 		return departmentDao.hasChildDepartmentInfo(department);
 	}
 
-	
+	public int getDepartmentIdByName(Department department) {
+		// TODO Auto-generated method stub
+		return departmentDao.getDepartmentIdByName(department);
+	}
+
+	public List<Department> getDepartmentInfoById(Department department){
+		return departmentDao.getDepartmentInfoById(department);
+	}
 	
 }

@@ -16,4 +16,8 @@ public interface DepartmentService {
 	
 	public int insertDepartmentInfo(Department department);
 	
+	public int getDepartmentIdByName(Department department);
+	
+	public List<Department> getDepartmentInfoById(Department department);
+	
 }
