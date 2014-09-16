@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lexindasoftservice.dao.DepartmentDao">
 
-	<!-- 根据id获取系统管理员信息 -->
+	<!-- 根据id获取自节点信息 -->
 	<select id="getDepartmentInfo" parameterType="Department" resultType="Department">
 		SELECT id,
 			department_name as departmentName,
@@ -13,7 +13,7 @@
 		FROM `department`
 		WHERE 1=1 and parent_id=#{id}
 	</select>
-	<!-- 根据id获取系统管理员信息 -->
+	<!-- 根据id获取组织机构信息 -->
 	<select id="getDepartmentInfoById" parameterType="Department" resultType="Department">
 		SELECT id,
 			department_name as departmentName,
@@ -24,7 +24,7 @@
 		FROM `department`
 		WHERE 1=1 and id=#{id}
 	</select>
-	<!-- 根据id获取系统管理员信息 -->
+	<!-- 根据id获取是否有子节点信息 -->
 	<select id="hasChildDepartmentInfo" parameterType="Department" resultType="Department">
 		SELECT id,
 			department_name as departmentName,
@@ -36,9 +36,14 @@
 		WHERE 1=1 and parent_id=#{id}
 	</select>
 	
-	<!-- 根据id获取系统管理员信息 -->
-	<select id="getDepartmentIdByName" parameterType="Department" resultType="int">
-		SELECT id
+	<!-- 根据组织名称获取id -->
+	<select id="getDepartmentByName" parameterType="Department" resultType="Department">
+		SELECT id,
+			department_name as departmentName,
+			parent_id as parentId,
+			level_id as levelId,
+			department_desc as departmentDesc,
+			create_time as createTime
  		FROM `department`
 		WHERE 1=1 
 		<if test="departmentName != null">
@@ -46,17 +51,21 @@
 		</if>
 	</select>
 	
-	<!-- 根据id获取系统管理员信息 -->
-	<select id="getDepartmentLevel" resultType="int">
-		SELECT distinct level_id 
-		FROM `department`
-		WHERE 1=1
+	<!-- 根据组织名称获取id -->
+	<select id="getDepartmentIdByName" parameterType="Department" resultType="int">
+		SELECT id
+ 		FROM `department`
+		WHERE department_name = #{departmentName}
 	</select>
 	
-	<!-- 保存系统管理员信息：存在则修改，否则更新 -->
+	<!-- 保存组织机构信息：存在则修改，否则更新 -->
 	<insert id="insertDepartmentInfo" parameterType="Department" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO `department`(department_name,parent_id,level_id, department_desc, create_time)
 		VALUES(#{departmentName}, #{parentId},#{levelId},#{departmentDesc},now())
 	</insert>
 	
+	<!-- 删除组织机构信息 -->
+	<insert id="deleteDepartmentInfo" parameterType="int">
+		delete from `department` where id=#{id}
+	</insert>
 </mapper>  

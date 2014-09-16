@@ -26,23 +26,27 @@ public class DepartmentServiceImpl implements DepartmentService {
 		return departmentDao.insertDepartmentInfo(department);
 	}
 
-	public List<Integer> getDepartmentLevel() {
-		// TODO Auto-generated method stub
-		return departmentDao.getDepartmentLevel();
-	}
-
 	public List<Department> hasChildDepartmentInfo(Department department) {
 		// TODO Auto-generated method stub
 		return departmentDao.hasChildDepartmentInfo(department);
 	}
 
+	public List<Department> getDepartmentByName(Department department) {
+		// TODO Auto-generated method stub
+		return departmentDao.getDepartmentByName(department);
+	}
+	
 	public int getDepartmentIdByName(Department department) {
 		// TODO Auto-generated method stub
 		return departmentDao.getDepartmentIdByName(department);
 	}
 
-	public List<Department> getDepartmentInfoById(Department department){
+	public Department getDepartmentInfoById(Department department){
 		return departmentDao.getDepartmentInfoById(department);
+	}
+	
+	public int deleteDepartmentInfo(int id){
+		return departmentDao.deleteDepartmentInfo(id);
 	}
 	
 }

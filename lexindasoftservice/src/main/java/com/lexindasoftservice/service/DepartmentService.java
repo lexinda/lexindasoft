@@ -12,12 +12,14 @@ public interface DepartmentService {
 	
 	public List<Department> hasChildDepartmentInfo(Department department);
 	
-	public List<Integer> getDepartmentLevel();
-	
 	public int insertDepartmentInfo(Department department);
+	
+	public List<Department> getDepartmentByName(Department department);
 	
 	public int getDepartmentIdByName(Department department);
 	
-	public List<Department> getDepartmentInfoById(Department department);
+	public Department getDepartmentInfoById(Department department);
+	
+	public int deleteDepartmentInfo(int id);
 	
 }
