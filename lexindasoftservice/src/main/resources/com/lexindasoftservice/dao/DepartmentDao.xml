@@ -68,4 +68,9 @@
 	<insert id="deleteDepartmentInfo" parameterType="int">
 		delete from `department` where id=#{id}
 	</insert>
+	
+	<!-- 更新组织机构信息 -->
+	<insert id="updateDepartmentInfo" parameterType="Department">
+		update `department` set department_name=#{departmentName},department_desc=#{departmentDesc} where id=#{id}
+	</insert>
 </mapper>  

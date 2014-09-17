@@ -23,4 +23,6 @@ public interface DepartmentDao {
 	public Department getDepartmentInfoById(Department department);
 	
 	public int deleteDepartmentInfo(int id);
+	
+	public int updateDepartmentInfo(Department department);
 }

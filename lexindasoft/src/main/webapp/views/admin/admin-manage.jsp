@@ -5,58 +5,298 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>用户管理</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>用户管理</title>
+	<script src="../../ui/jquery.min.js" type="text/javascript"></script>
+    <script src="../../ui/jquery.easyui.min.js" type="text/javascript"></script>
+    <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
+    <style type="text/css"> 
+        #fm 
+        { 
+            margin: 0; 
+            padding: 10px 30px; 
+        } 
+        .ftitle 
+        { 
+            font-size: 14px; 
+            font-weight: bold; 
+            padding: 5px 0; 
+            margin-bottom: 10px; 
+            border-bottom: 1px solid #ccc; 
+        } 
+        .fitem 
+        { 
+            margin-bottom: 5px; 
+        } 
+        .fitem label 
+        { 
+            display: inline-block; 
+            width: 80px; 
+        } 
+    </style>
+    <script type="text/javascript">
+    $(function(){
+	    $('#tt').datagrid({
+	    	idField:'id',
+			iconCls:'icon-save',
+	    	title:'用户管理',
+	    	url:'/validate/admin/data',
+	    	toolbar:[{ 
+			 		text: '用户名： <input type="text" id="usernameq" name="usernameq" style="width:100px;"></input>' 
+			 	},{ 
+			 		text: '是否启用： <select id="status" name="status" style="width:100px;"></select>' 
+			 	},{ 
+			 		text: '是否为初始密码： <select id="is_initpwd" name="is_initpwd" style="width:100px;"></select>' 
+			 	}, { 
+			 	id: 'searchBtn', 
+			 	text: '查询', 
+			 	iconCls:'icon-search', 
+			 	handler: function(){ 
+			 	query(); 
+			 	} 
+			 	},{  
+                    text:'新增',iconCls:'icon-add',handler:function(){  
+                        addrow(this);  
+                    }  
+                },  
+                {text:'批量删除',iconCls:'icon-cut',handler:function(){  
+                    mostDelete(this);  
+                    }  
+                }
+                ],  
+			fit:'true',
+	    	columns:[[ 
+	    	    {field:'ck',checkbox:true},
+	    		{field:'username',title:'用户名',width:'12%'}, 
+	    		{field:'name',title:'姓名',width:'12%'}, 
+	    		{field:'phone',title:'电话号码',width:'12%'},
+	    		{field:'email',title:'邮箱',width:'12%'},
+	    		{field:'status',title:'状态',align:'center',width:'12%',formatter:function(value,row,index){
+							if(row.status=='0'){
+								var a = '<a href="#" id="'+row.id+'" onclick="unusefulrow(this)">禁用</a>';
+								return a;
+							}else{
+								var a = '<a href="#" id="'+row.id+'" onclick="usefulrow(this)">启用</a>';
+								return a;
+							}
+					}},
+	    		{field:'isInitpwd',title:'是否为初始密码',align:'center',width:'12%',formatter:function(value,row,index){
+					if(row.is_initpwd=='1'){
+						var a = '<span>否</span>';
+						return a;
+					}else{
+						var a = '<span>是</span>';
+						return a;
+					}
+				}},
+				{field:'departmentName',title:'所属机构',width:'12%'},
+				{field:'action',title:'操作',width:'12%',align:'center',formatter:function(value,row,index){
+					var a = '<a href="#" id="'+row.id+'" onclick="editrow(this)">编辑</a>  ';
+					var b = '<a href="#" id="'+row.id+'" onclick="deleterow(this)">删除</a>';
+					return a+b;
+				}}
+	    	]] 
+	    });
+	    $('#departmentName').combotree({
+	    	url: '/validate/department/combotreedata?departmentName=',
+	    	valueField: 'id',
+            textField: 'text',
+	    	required: true,
+	    	onBeforeExpand:function(row){
+		    		var url = '/validate/department/combotreedata?departmentName='+row.departmentName; 
+		    		$('#departmentName').combotree('tree').tree('options').url = url; 
+		    		return true; 
+		    }
+	    });  
+    });
+    function addrow(data){
+    	$("#username").removeAttr('readonly');
+    	$("#dlg").dialog({
+        	open:true,
+        	width:400,
+        	height:330,
+        	closed: false,  
+        	cache: false,  
+        	modal: true,
+         	title:"新增用户",
+         	buttons:[{ 
+         		text: '提交', 
+         		iconCls: 'icon-ok', 
+         		handler: function() { 
+         			savedata();
+         		} 
+         		}, { 
+         		text: '取消', 
+         		handler: function() { 
+         			$('#dlg').dialog('close');
+         		} 
+         	}]
+         });
+         $("#fm").form("clear");
+    }
+    function savedata() {
+        $("#fm").form("submit", {
+            url: "/validate/admin/add",
+            onsubmit: function () {
+                return $(this).form("validate");
+            },
+            success: function (data) {
+           	 var obj = jQuery.parseJSON(data);
+                if (obj.result == "1") {
+                    $.messager.alert("提示信息", "操作成功");
+                    $("#dlg").dialog("close");
+                    $("#tt").datagrid("load");
+                }
+                else {
+                    $.messager.alert("提示信息", "操作失败");
+                }
+            }
+        });
+    }
+    function editrow(data){
+    	$("#username").attr('readonly','readonly');
+    	$("#dlg").dialog({
+        	open:true,
+        	width:400,
+        	height:330,
+        	closed: false,  
+        	cache: false,  
+        	modal: true,
+         	title:"查看用户",
+         	buttons:[{ 
+         		text: '提交', 
+         		iconCls: 'icon-ok', 
+         		handler: function() { 
+         			editdata();
+         		} 
+         		}, { 
+         		text: '取消', 
+         		handler: function() { 
+         			$('#dlg').dialog('close');
+         		} 
+         	}]
+         });
+    	$.post('/validate/admin/info', { id: data.id }, function (result) {
+                $('#fm').form('load',result);// reload the user data  
+        }, 'json');
+    }
+    function editdata() {
+        $("#fm").form("submit", {
+            url: "/validate/department/doadd",
+            onsubmit: function () {
+                return $(this).form("validate");
+            },
+            success: function (data) {
+           	 var obj = jQuery.parseJSON(data);
+                if (obj.result == "1") {
+                    $.messager.alert("提示信息", "操作成功");
+                    $("#dlg").dialog("close");
+                    $("#tt").datagrid("load");
+                }
+                else {
+                    $.messager.alert("提示信息", "操作失败");
+                }
+            }
+        });
+    }
+    function usefulrow(data){
+    	$.post('/validate/admin/active', { id: data.id }, function (result) {
+            if (result.success) {
+                $('#tt').datagrid('reload');// reload the user data  
+            } else {
+                $.messager.show({   // show error message  
+                    title: 'Error',
+                    msg: result.errorMsg
+                });
+            }
+        }, 'json');
+    }
+    function unusefulrow(data){
+    	$.post('/validate/admin/active', { id: data.id }, function (result) {
+            if (result.success) {
+                $('#tt').datagrid('reload');// reload the user data  
+            } else {
+                $.messager.show({   // show error message  
+                    title: 'Error',
+                    msg: result.errorMsg
+                });
+            }
+        }, 'json');
+    }
+    function mostDelete(data){
+    	var checkedItems = $('#tt').datagrid('getChecked');
+    	var names='';
+    	$.each(checkedItems, function(index, item){
+    		names+=item.id+',';
+    	});
+    	$.messager.confirm('警告', '你确定删除这些用户吗?', function (r) {
+            if (r) {
+                $.post('/validate/admin/delete', { ids: names }, function (result) {
+                    if (result.success) {
+                        $('#tt').datagrid('reload');// reload the user data  
+                    } else {
+                        $.messager.show({   // show error message  
+                            title: 'Error',
+                            msg: result.errorMsg
+                        });
+                    }
+                }, 'json');
+            }
+        });    
+    }
+    
+    function deleterow(data){
+    	$.messager.confirm('警告', '你确定删除该用户吗?', function (r) {
+            if (r) {
+                $.post('/validate/admin/delete', { ids: data.id }, function (result) {
+                    if (result.success) {
+                        $('#tt').datagrid('reload');// reload the user data  
+                    } else {
+                        $.messager.show({   // show error message  
+                            title: 'Error',
+                            msg: result.errorMsg
+                        });
+                    }
+                }, 'json');
+            }
+        });    
+    }
+    </script>
 </head>
 <body>
-<div class="pageHeader">
-	<form action="/admin/search" method="post">
-	<div class="searchBar">
-		<table class="searchContent">
-			<tr><td>用户名：<input type="text" name="account"/><button type="submit">查询</button></td></tr>
-		</table>
-	</div>
-	</form>
-</div>
-<div class="pageContent">
-	<div class="panelBar">
-		<ul class="toolBar">
-			<li><a class="add" href="/validate/admin/add" target="navTab"><span>新增用户</span></a></li>
-			<li><a title="是否批量删除?" target="selectedTodo" rel="ids" postType="string" href="/validate/admin/delete" class="delete"><span>批量删除</span></a></li>
-			<li class="line">line</li>
-			<li><a class="icon" href="/admin/excel" target="dwzExport" targetType="navTab" title="是否确定导出！"><span>导出Excel数据</span></a></li>
-		</ul>
-	</div>
-	<table class="table" width="100%" layoutH="138">
-		<thead>
-			<tr>
-				<th width="22"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
-				<th>用户名</th>
-				<th>email</th>
-				<th>创建时间</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-		<thbody>
-			<c:forEach items="${adminList}" var="admin">
-				<tr target="user" rel="${admin.id}">
-					<td><input name="ids" value="${admin.id}" type="checkbox"></td>
-					<td>${admin.account}</td>
-					<td>${admin.email}</td>
-					<td><fmt:formatDate value="${admin.createTime}" pattern="yyyy-MM-dd HH:mm"/></td>
-					<td>
-						<c:if test="${admin.status == 0 }">
-							<a title="禁用状态，点击启用！" target="ajaxTodo" href="/validate/admin/active?id=${admin.id}" class="btnDel">禁用状态，点击启用！</a>
-						</c:if>
-						<c:if test="${admin.status == 1 }">
-							<a title="启用状态，点击禁用！" target="ajaxTodo" href="/validate/admin/active?id=${admin.id}" class="btnSelect">启用状态，点击禁用！</a>
-						</c:if>
-						<a title="查看" target="navTab" href="/validate/admin/edit?id=${admin.id}" class="btnEdit">查看</a>
-					</td>
-				</tr>
-			</c:forEach>
-		</thbody>
-	</table>
-</div>
+<table id="tt"></table> 
+<div id="dlg"> 
+       <form id="fm" method="post"> 
+       <div class="ftitle"> 
+           	信息编辑 
+       </div> 
+       <div class="fitem"> 
+           <label>用户名：</label> 
+           <input name="username" id="username" class="easyui-validatebox" required="true"/> 
+       </div> 
+       <div class="fitem"> 
+			<label>姓名:</label>
+			<input name="name" class="easyui-validatebox" value=""></input>
+       </div> 
+       <div class="fitem"> 
+			<label>出生日期：</label>
+			<input name="birthDay" class="easyui-validatebox" value=""></input>
+       </div> 
+       <div class="fitem"> 
+			<label>电话:</label>
+			<input name="phone" class="easyui-validatebox" value=""></input>
+       </div>
+       <div class="fitem"> 
+			<label>邮箱:</label>
+			<input name="email" class="easyui-validatebox" value=""></input>
+       </div>
+       <div class="fitem"> 
+			<label>所属机构:</label>
+			<input name="departmentName" id="departmentName" value=""></input>
+       </div> 
+       <input type=hidden class="easyui-validatebox" name="id" value="" /> 
+       </form> 
+   </div>
 </body>
 </html>

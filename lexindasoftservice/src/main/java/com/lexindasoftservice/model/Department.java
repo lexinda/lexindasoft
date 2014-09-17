@@ -10,6 +10,7 @@ public class Department {
 	private String departmentDesc;
 	private Date Create_time;
 	private String state;
+	private String text;
 	public int getId() {
 		return id;
 	}
@@ -52,6 +53,12 @@ public class Department {
 	}
 	public void setState(String state) {
 		this.state = state;
+	}
+	public String getText() {
+		return text;
+	}
+	public void setText(String text) {
+		this.text = text;
 	}
 	@Override
 	public String toString() {

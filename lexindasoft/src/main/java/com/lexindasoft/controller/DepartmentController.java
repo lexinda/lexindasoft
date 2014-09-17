@@ -82,6 +82,42 @@ public class DepartmentController {
             e.printStackTrace();  
        }
 	}
+	//combotree加载数据
+		@RequestMapping(value="/combotreedata",method = RequestMethod.POST)
+		public void departmentCombotreeData(HttpServletResponse resp,@RequestParam("departmentName") String departmentName){
+			Department department = new Department();
+			int id=1;
+			departmentName = Inputs.trimToNull(departmentName);
+			if(departmentName!=null){
+				department.setDepartmentName(departmentName);
+				id = departmentService.getDepartmentIdByName(department);
+			}
+			department.setId(id);
+			List<Department> departmentList = departmentService.getDepartmentInfo(department);
+			for(Department departments:departmentList){
+				department.setId(departments.getId());
+				List<Department> childDepartment = departmentService.hasChildDepartmentInfo(departments);
+				if(childDepartment.size()>0){
+					departments.setState("closed");
+				}else{
+					departments.setState("open");
+				}
+				departments.setText(departments.getDepartmentName());
+			}
+			Gson gson = new Gson();
+			String data=null;
+			data = gson.toJson(departmentList);
+	        resp.setContentType("application/Json");
+	        resp.setCharacterEncoding("UTF-8");  
+	        resp.setHeader("Cache-Control", "no-cache"); 
+	        PrintWriter out;
+	        try { 
+	            out = resp.getWriter();  
+	            out.print(data);
+	       } catch (IOException e) {  
+	            e.printStackTrace();  
+	       }
+		}
 	//查询按钮
 	@RequestMapping(value="/searchdata",method = RequestMethod.POST)
 	public void departmentSearchData(HttpServletResponse resp,@RequestParam("departmentName") String departmentName){
@@ -156,16 +192,9 @@ public class DepartmentController {
             e.printStackTrace();  
        }
 	}
-	//跳转页面
-	@RequestMapping(value="/add",method = RequestMethod.GET)
-	public ModelAndView departmentAdd(@RequestParam("id")int id){
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("department/department-add");
-		return mav;
-	}
 	//保存数据
-	@RequestMapping(value="/doadd",method = RequestMethod.POST)
-	public void departmentDoAdd(HttpServletResponse resp,@RequestParam("parentId")int parentId
+	@RequestMapping(value="/add",method = RequestMethod.POST)
+	public void addDepartment(HttpServletResponse resp,@RequestParam("parentId")int parentId
 			,@RequestParam("departmentName")String departmentName,@RequestParam("departmentDesc")String departmentDesc){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		logger.debug("----"+parentId+"----------"+departmentName+"-----------"+departmentDesc);
@@ -177,7 +206,7 @@ public class DepartmentController {
 		departmentInfo.setDepartmentName(departmentName);
 		departmentInfo.setDepartmentDesc(departmentDesc);
 		int i = departmentService.insertDepartmentInfo(departmentInfo);
-		jsonMap.put("result",1);
+		jsonMap.put("result",i);
 		Gson gson = new Gson();
         
         String list1 = gson.toJson(jsonMap);
@@ -192,9 +221,35 @@ public class DepartmentController {
             e.printStackTrace();  
        }
 	}
+	//保存数据
+		@RequestMapping(value="/update",method = RequestMethod.POST)
+		public void updateDepartment(HttpServletResponse resp,@RequestParam("parentId")int parentId
+				,@RequestParam("departmentName")String departmentName,@RequestParam("departmentDesc")String departmentDesc){
+			Map<String, Object> jsonMap = new HashMap<String, Object>();
+			logger.debug("----"+parentId+"----------"+departmentName+"-----------"+departmentDesc);
+			Department departmentInfo = new Department();
+			departmentInfo.setId(parentId);
+			departmentInfo.setDepartmentName(departmentName);
+			departmentInfo.setDepartmentDesc(departmentDesc);
+			int i = departmentService.updateDepartmentInfo(departmentInfo);
+			jsonMap.put("result",i);
+			Gson gson = new Gson();
+	        
+	        String list1 = gson.toJson(jsonMap);
+	        resp.setContentType("application/Json");
+	        resp.setCharacterEncoding("UTF-8");  
+	        resp.setHeader("Cache-Control", "no-cache"); 
+	        PrintWriter out;
+	        try { 
+	            out = resp.getWriter();  
+	            out.print(list1);
+	       } catch (IOException e) {  
+	            e.printStackTrace();  
+	       }
+		}
 	
 	//删除数据
-		@RequestMapping(value="/deleteDepartment",method = RequestMethod.POST)
+		@RequestMapping(value="/delete",method = RequestMethod.POST)
 		public void deleteDepartment(HttpServletResponse resp,@RequestParam("id")int id){
 			Map<String, Object> jsonMap = new HashMap<String, Object>();
 			int i = departmentService.deleteDepartmentInfo(id);

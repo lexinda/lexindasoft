@@ -48,5 +48,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 	public int deleteDepartmentInfo(int id){
 		return departmentDao.deleteDepartmentInfo(id);
 	}
+
+	public int updateDepartmentInfo(Department department) {
+		// TODO Auto-generated method stub
+		return departmentDao.updateDepartmentInfo(department);
+	}
 	
 }

@@ -28,9 +28,13 @@ public class Admin implements Serializable{
 	
 	private Date updatePwdtime;
 	
-	private int is_initpwd;
+	private int isInitpwd;
 	
 	private Date birthDay;
+	
+	private int departmentId;
+	
+	private String departmentName;
 
 	private Date createTime;
 	
@@ -112,12 +116,12 @@ public class Admin implements Serializable{
 		this.updatePwdtime = updatePwdtime;
 	}
 
-	public int getIs_initpwd() {
-		return is_initpwd;
+	public int getIsInitpwd() {
+		return isInitpwd;
 	}
 
-	public void setIs_initpwd(int is_initpwd) {
-		this.is_initpwd = is_initpwd;
+	public void setIsInitpwd(int isInitpwd) {
+		this.isInitpwd = isInitpwd;
 	}
 
 	public Date getBirthDay() {
@@ -160,15 +164,33 @@ public class Admin implements Serializable{
 		this.pageNum = pageNum;
 	}
 
+	public int getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(int departmentId) {
+		this.departmentId = departmentId;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+	}
+
 	@Override
 	public String toString() {
 		return "Admin [id=" + id + ", name=" + name + ", username=" + username
 				+ ", password=" + password + ", phone=" + phone + ", email="
 				+ email + ", status=" + status + ", initPassword="
 				+ initPassword + ", updatePwdtime=" + updatePwdtime
-				+ ", is_initpwd=" + is_initpwd + ", birthDay=" + birthDay
-				+ ", createTime=" + createTime + ", updateTime=" + updateTime
-				+ ", page=" + page + ", pageNum=" + pageNum + "]";
+				+ ", isInitpwd=" + isInitpwd + ", birthDay=" + birthDay
+				+ ", departmentId=" + departmentId + ", departmentName="
+				+ departmentName + ", createTime=" + createTime
+				+ ", updateTime=" + updateTime + ", page=" + page
+				+ ", pageNum=" + pageNum + "]";
 	}
-	
+
 }

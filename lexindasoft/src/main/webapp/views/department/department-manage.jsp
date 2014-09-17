@@ -63,10 +63,10 @@
  			        {field:'departmentDesc',title:'机构描述',width:'30%'},  
  			       	{field:'action',title:'操作',width:'30%',align:'center',
  						formatter:function(value,row,index){
- 								var a = '<a href="#" id="'+row.id+'" class="'+row.departmentName+'" onclick="newrow(this)">新增</a> ';
- 								var e = '<a href="#" id="'+row.id+'" onclick="editrow(this)">编辑</a> ';
+ 								var a = '<a href="#" departmentId="'+row.id+'" departmentName="'+row.departmentName+'"  onclick="newrow(this)">新增</a> ';
+ 								var e = '<a href="#" departmentId="'+row.id+'" departmentName="'+row.departmentName+'" departmentDesc="'+row.departmentDesc+'" onclick="editrow(this)">编辑</a> ';
  								if(row.state=='open'){
- 									var d = '<a href="#" id="'+row.id+'" onclick="deleterow(this)">删除</a>';
+ 									var d = '<a href="#" departmentId="'+row.id+'" onclick="deleterow(this)">删除</a>';
  									return a+e+d;
  								}else{
  									return a+e;
@@ -92,13 +92,15 @@
  		        }  
  		    });  
     	});
-    	function getRowIndex(target){
+    	/* function getRowIndex(target){
     		var tr = $(target).closest('tr.datagrid-row');
     		return parseInt(tr.attr('datagrid-row-index'));
     	}
     	function editrow(target){
+    		var data = target.attributes;
+    		var value=data.getNamedItem("departmentName").value;
     		$('#tt').treegrid('beginEdit', getRowIndex(target));
-    	}
+    	} */
     	function query(){ 
     		var departmentName=$('#departmentName').combobox('getValue');
     		if(departmentName==undefined){
@@ -111,7 +113,10 @@
     	
     	 var url;
          var type;
-         function newrow(data) {
+         function newrow(target) {
+        	 var data = target.attributes;
+        	 var departmentId=data.getNamedItem("departmentId").value;
+        	 var departmentName=data.getNamedItem("departmentName").value;
              $("#dlg").dialog({
             	open:true,
             	width:400,
@@ -119,23 +124,54 @@
             	closed: false,  
             	cache: false,  
             	modal: true,
-             	title:data.className,
-             	buttons:'#dlg-buttons'
+             	title:departmentName,
+             	buttons:[{ 
+             		text: '提交', 
+             		iconCls: 'icon-ok', 
+             		handler: function() { 
+             			editdata();
+             		} 
+             		}, { 
+             		text: '取消', 
+             		handler: function() { 
+             			$('#dlg').dialog('close');
+             		} 
+             	}]
              });
              $("#fm").form("clear");
-             $("#parentId").val(data.id);
+             $("#parentId").val(departmentId);
          }
-         function edituser() {
-             var row = $("#dg").datagrid("getSelected");
-             if (row) {
-                 $("#dlg").dialog("open").dialog('setTitle', 'Edit User');
-                 $("#fm").form("load", row);
-                 url = "UserManage.aspx?id=" + row.ID;
-             }
+         function editrow(target) {
+        	 var data = target.attributes;
+        	 var departmentId=data.getNamedItem("departmentId").value;
+        	 var departmentName=data.getNamedItem("departmentName").value;
+        	 var departmentDesc=data.getNamedItem("departmentDesc").value;
+        	 $("#dlg").dialog({
+              	open:true,
+              	width:400,
+              	height:300,
+              	closed: false,  
+              	cache: false,  
+              	modal: true,
+               	title:departmentName,
+               	buttons:[{ 
+             		text: '提交', 
+             		iconCls: 'icon-ok', 
+             		handler: function() { 
+             			editdata();
+             		} 
+             		}, { 
+             		text: '取消', 
+             		handler: function() { 
+             			$('#dlg').dialog('close');
+             		} 
+             	}]
+               });
+        	 $("#fm").form('load',{parentId:departmentId,departmentName:departmentName,departmentDesc:departmentDesc});
          }
-         function saveuser() {
+         function savedata() {
              $("#fm").form("submit", {
-                 url: "/validate/department/doadd",
+                 url: "/validate/department/add",
                  onsubmit: function () {
                      return $(this).form("validate");
                  },
@@ -152,23 +188,42 @@
                  }
              });
          }
-         function deleterow(data) {
-             if (data) {
-                 $.messager.confirm('警告', '你确定删除此组织机构吗?', function (r) {
-                     if (r) {
-                         $.post('/validate/department/deleteDepartment', { id: data.id }, function (result) {
-                             if (result.success) {
-                                 $('#tt').treegrid('reload');// reload the user data  
-                             } else {
-                                 $.messager.show({   // show error message  
-                                     title: 'Error',
-                                     msg: result.errorMsg
-                                 });
-                             }
-                         }, 'json');
+         function editdata() {
+             $("#fm").form("submit", {
+                 url: "/validate/department/update",
+                 onsubmit: function () {
+                     return $(this).form("validate");
+                 },
+                 success: function (data) {
+                	 var obj = jQuery.parseJSON(data);
+                     if (obj.result == "1") {
+                         $.messager.alert("提示信息", "操作成功");
+                         $("#dlg").dialog("close");
+                         $("#tt").treegrid("load");
                      }
-                 });
-             }
+                     else {
+                         $.messager.alert("提示信息", "操作失败");
+                     }
+                 }
+             });
+         }
+         function deleterow(target) {
+        	 var data = target.attributes;
+        	 var departmentId=data.getNamedItem("departmentId").value;
+        	 $.messager.confirm('警告', '你确定删除此组织机构吗?', function (r) {
+                 if (r) {
+                     $.post('/validate/department/delete', { id: departmentId }, function (result) {
+                         if (result.success) {
+                             $('#tt').treegrid('reload');// reload the user data  
+                         } else {
+                             $.messager.show({   // show error message  
+                                 title: 'Error',
+                                 msg: result.errorMsg
+                             });
+                         }
+                     }, 'json');
+                 }
+             });    
          }  
     </script>
 </head>
@@ -182,25 +237,14 @@
        </div> 
        <div class="fitem"> 
            <label>部门名称：</label> 
-           <input name="departmentName" id="departmentName" class="easyui-validatebox" required="true" /> 
+           <input name="departmentName" id="departmentName" class="easyui-validatebox" required="true" value=""/> 
        </div> 
        <div class="fitem"> 
-           <!-- <input name="departmentDesc" class="easyui-datebox" required="true" />  -->
 			<label>部门描述:</label>
-			<textarea name="departmentDesc" style="height:60px;"></textarea>
+			<textarea name="departmentDesc" style="height:60px;" value=""></textarea>
        </div> 
-       <!-- <div class="fitem"> 
-           <label> 
-           		创建人
-           </label> 
-           <input name="CreateName" class="easyui-vlidatebox" /> 
-       </div> --> 
        <input type="hidden" name="parentId" id="parentId" value="" /> 
        </form> 
    </div>
-	<div id="dlg-buttons"> 
-        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveuser()" iconcls="icon-save">保存</a> 
-        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg').dialog('close')" iconcls="icon-cancel">取消</a> 
-    </div> 
 </body>
 </html>

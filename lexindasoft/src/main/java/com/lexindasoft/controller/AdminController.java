@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.lexindasoftservice.model.Admin;
+import com.lexindasoftservice.model.Department;
 import com.lexindasoftservice.service.AdminService;
+import com.lexindasoftservice.service.DepartmentService;
+import com.lexindasoftservice.utils.Inputs;
 import com.lexindasoftservice.utils.Md5Util;
 import com.lexindasoftservice.utils.RandomPwdUtil;
 
@@ -34,8 +36,18 @@ public class AdminController {
 	@Autowired
 	AdminService adminService;
 	
+	@Autowired
+	DepartmentService departmentService;
+	
 	@RequestMapping(value="/manage",method = RequestMethod.GET)
 	public ModelAndView adminManage(){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("admin/admin-manage");
+		return mav;
+	}
+	
+	@RequestMapping(value="/data",method = RequestMethod.POST)
+	public void adminData(HttpServletResponse resp){
 		ModelAndView mav = new ModelAndView();
 		Admin admin = new Admin();
 		admin.setPage(-1);
@@ -43,44 +55,53 @@ public class AdminController {
 		admin.setPage(0);
 		admin.setPageNum(PAGE_NUM);
 		List<Admin> adminList = adminService.getAllAdminList(admin);
-		mav.addObject("adminList", adminList);
-		mav.setViewName("admin/admin-manage");
-		return mav;
+		for(Admin admins : adminList){
+			Department department = new Department();
+			department.setId(admins.getDepartmentId());
+			Department departmentInfo = departmentService.getDepartmentInfoById(department);
+			if(departmentInfo!=null){
+				admins.setDepartmentName(departmentInfo.getDepartmentName());
+			}
+		}
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Gson gson = new Gson();
+		String data=null;
+		resultMap.put("total", adminList.size());
+		resultMap.put("rows", adminList);
+		data = gson.toJson(resultMap);
+        resp.setContentType("application/Json");
+        resp.setCharacterEncoding("UTF-8");  
+        resp.setHeader("Cache-Control", "no-cache"); 
+        PrintWriter out;
+        try { 
+            out = resp.getWriter();  
+            out.print(data);
+       } catch (IOException e) {  
+            e.printStackTrace();  
+       }
 	}
 	
-	@RequestMapping(value="/add",method = RequestMethod.GET)
-	public ModelAndView adminAdd(){
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("admin/admin-add");
-		return mav;
-	}
-	
-	@RequestMapping(value="/doadd",method = RequestMethod.POST)
-	public void adminDoAdd(HttpServletResponse resp,@RequestParam("name")String name,@RequestParam("phone")String phone,
-			@RequestParam("birthday")String birthday,@RequestParam("email")String email) throws ParseException{
+	@RequestMapping(value="/add",method = RequestMethod.POST)
+	public void addAdmin(HttpServletResponse resp,@RequestParam("username")String username,@RequestParam(value="name",required=false)String name,@RequestParam(value="phone",required=false)String phone,
+			@RequestParam(value="birthDay",required=false)String birthDay,@RequestParam(value="email",required=false)String email,@RequestParam(value="departmentName",required=false)int departmentName) throws ParseException{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date birthDay = sdf.parse(birthday);
+		username = Inputs.trimToNull(username);
+		name = Inputs.trimToNull(name);
+		phone = Inputs.trimToNull(phone);
+		email = Inputs.trimToNull(email);
+		birthDay = Inputs.trimToNull(birthDay);
+		Date birthday = null;
+		if(birthDay!=null){
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			birthday = sdf.parse(birthDay);
+		}
 		String initPassword = RandomPwdUtil.getRandomPassword(8);
 		String password = Md5Util.digestMD5(initPassword);
-		Admin admin = getAdmin(name, email, password, email,phone, 0, initPassword, 0, birthDay,0, PAGE_NUM);
+		
+		Admin admin = getAdmin(name, username, password, email,phone, 0, initPassword, 0, birthday,departmentName,null,0, PAGE_NUM);
 		int result = adminService.insertAdminInfo(admin);
-		if(result>0){
-			jsonMap.put("statusCode", 200);
-			jsonMap.put("message", "新增成功!");
-			jsonMap.put("navTabId","user");
-			jsonMap.put("callbackType","closeCurrent");
-		}else{
-			jsonMap.put("statusCode", 300);
-			jsonMap.put("message", "新增失败!");
-			jsonMap.put("navTabId","");
-			jsonMap.put("callbackType","");
-		}
-		jsonMap.put("rel","");
-		jsonMap.put("forwardUrl","");
-		jsonMap.put("confirmMsg","");
+		jsonMap.put("result", result);
 		Gson gson = new Gson();
-        
         String list1 = gson.toJson(jsonMap);
         resp.setContentType("application/Json");
         resp.setCharacterEncoding("UTF-8");  
@@ -96,7 +117,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/active",method = RequestMethod.POST)
-	public void adminActive(@RequestParam("id")int id,HttpServletResponse resp){
+	public void activeAdmin(@RequestParam("id")int id,HttpServletResponse resp){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		Admin admin=adminService.getAdminById(id);
 		if(admin.getStatus()==0){
@@ -106,24 +127,12 @@ public class AdminController {
 		}
 		int i = adminService.updateAdminInfo(admin);
 		if(i>0){
-			jsonMap.put("statusCode", 200);
-			if(admin.getStatus()==1){
-				jsonMap.put("message", "成功启用!");
-			}else if(admin.getStatus()==0){
-				jsonMap.put("message", "成功禁用!");
-			}
-			
+			jsonMap.put("success", true);
 		}else{
-			jsonMap.put("statusCode", 300);
-			jsonMap.put("message", "操作失败!");
+			jsonMap.put("success", false);
+			jsonMap.put("errorMsg", "修改失败!");
 		}
-		jsonMap.put("navTabId","user");
-		jsonMap.put("rel","");
-		jsonMap.put("callbackType","");
-		jsonMap.put("forwardUrl","");
-		jsonMap.put("confirmMsg","");
 		Gson gson = new Gson();
-        
         String list1 = gson.toJson(jsonMap);
         resp.setContentType("application/Json");
         resp.setCharacterEncoding("UTF-8");  
@@ -138,42 +147,46 @@ public class AdminController {
        }
 	}
 	
-	@RequestMapping(value="/edit",method = RequestMethod.GET)
-	public ModelAndView adminEdit(@RequestParam("id") int id){
-		ModelAndView mav = new ModelAndView();
-		Admin admin = adminService.getAdminById(id);
-		mav.addObject("admin", admin);
-		mav.setViewName("admin/admin-edit");
-		return mav;
+	@RequestMapping(value="/info",method = RequestMethod.POST)
+	public void getAdminInfo(HttpServletResponse resp,@RequestParam("id") int id){
+		Admin admin=adminService.getAdminById(id);
+		Department department = new Department();
+		department.setId(id);
+		Department departmentInfo = departmentService.getDepartmentInfoById(department);
+		admin.setDepartmentName(departmentInfo.getDepartmentName());
+		Gson gson = new Gson();
+        String list1 = gson.toJson(admin);
+        resp.setContentType("application/Json");
+        resp.setCharacterEncoding("UTF-8");  
+        resp.setHeader("Cache-Control", "no-cache"); 
+        PrintWriter out;
+        try { 
+            out = resp.getWriter();  
+            out.print(list1);
+            // 用于返回对象参数 
+       } catch (IOException e) {  
+            e.printStackTrace();  
+       }
 	}
 	
-	@RequestMapping(value="/doedit",method = RequestMethod.POST)
-	public void adminDoEdit(HttpServletResponse resp,@RequestParam("name")String name,@RequestParam("id")int id,@RequestParam("phone")String phone,
-			@RequestParam("birthday")String birthday,@RequestParam("email")String email) throws ParseException{
+	@RequestMapping(value="/update",method = RequestMethod.POST)
+	public void updateAdmin(HttpServletResponse resp,@RequestParam("username")String username,@RequestParam("name")String name,@RequestParam("id")int id,@RequestParam("phone")String phone,
+			@RequestParam("birthDay")String birthDay,@RequestParam("email")String email,@RequestParam(value="departmentName",required=false)int departmentName) throws ParseException{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date birthDay = sdf.parse(birthday);
-		Admin admin = adminService.getAdminById(id);
-		admin.setName(name);
-		admin.setBirthDay(birthDay);
-		admin.setUsername(email);
-		admin.setEmail(email);;
-		admin.setPhone(phone);
-		int result = adminService.updateAdminInfo(admin);
-		if(result>0){
-			jsonMap.put("statusCode", 200);
-			jsonMap.put("message", "新增成功!");
-			jsonMap.put("navTabId","user");
-			jsonMap.put("callbackType","closeCurrent");
-		}else{
-			jsonMap.put("statusCode", 300);
-			jsonMap.put("message", "新增失败!");
-			jsonMap.put("navTabId","");
-			jsonMap.put("callbackType","");
+		username = Inputs.trimToNull(username);
+		name = Inputs.trimToNull(name);
+		phone = Inputs.trimToNull(phone);
+		email = Inputs.trimToNull(email);
+		birthDay = Inputs.trimToNull(birthDay);
+		Date birthday = null;
+		if(birthDay!=null){
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			birthday = sdf.parse(birthDay);
 		}
-		jsonMap.put("rel","");
-		jsonMap.put("forwardUrl","");
-		jsonMap.put("confirmMsg","");
+		Admin admin = adminService.getAdminById(id);
+		Admin adminInfo = getAdmin(name, username, admin.getPassword(), email,phone, 0, admin.getInitPassword(), 0, birthday,departmentName,null,0, PAGE_NUM);
+		int result = adminService.updateAdminInfo(adminInfo);
+		jsonMap.put("result", result);
 		Gson gson = new Gson();
         
         String list1 = gson.toJson(jsonMap);
@@ -193,21 +206,20 @@ public class AdminController {
 	@RequestMapping(value="/delete",method = RequestMethod.POST)
 	public void adminDelete(@RequestParam("ids")String ids,HttpServletResponse resp){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		int i=adminService.deleteAdminInfo(ids);
-		if(i>0){
-			jsonMap.put("statusCode", 200);
-			jsonMap.put("message", "删除成功!");
-		}else{
-			jsonMap.put("statusCode", 300);
-			jsonMap.put("message", "删除失败!");
+		String[] id = ids.split(",");
+		int i=0;
+		if(id.length>0){
+			for(String value :id){
+				i=adminService.deleteAdminInfo(value);
+			}
 		}
-		jsonMap.put("navTabId","user");
-		jsonMap.put("rel","");
-		jsonMap.put("callbackType","");
-		jsonMap.put("forwardUrl","");
-		jsonMap.put("confirmMsg","");
+		if(i>0){
+			jsonMap.put("success", true);
+		}else{
+			jsonMap.put("success", false);
+			jsonMap.put("errorMsg", "删除失败!");
+		}
 		Gson gson = new Gson();
-        
         String list1 = gson.toJson(jsonMap);
         resp.setContentType("application/Json");
         resp.setCharacterEncoding("UTF-8");  
@@ -223,7 +235,7 @@ public class AdminController {
 	}
 	
 	Admin getAdmin(String name,String account,String password,String email,String phone,int status,String initPassword,
-			int is_initpwd,Date birthDay,int page,int pageNum){
+			int is_initpwd,Date birthDay,int departmentId,String departmentName,int page,int pageNum){
 		Admin admin = new Admin();
 		admin.setName(name);
 		admin.setUsername(account);
@@ -232,8 +244,10 @@ public class AdminController {
 		admin.setPhone(phone);
 		admin.setStatus(status);
 		admin.setInitPassword(initPassword);
-		admin.setIs_initpwd(is_initpwd);
+		admin.setIsInitpwd(is_initpwd);
 		admin.setBirthDay(birthDay);
+		admin.setDepartmentId(departmentId);
+		admin.setDepartmentName(departmentName);
 		admin.setPage(page);
 		admin.setPageNum(pageNum);
 		return admin;

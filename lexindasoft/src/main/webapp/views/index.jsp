@@ -191,7 +191,7 @@
             <div title="系统管理" iconcls="icon-large-clipart" selected="true">
                 <ul class="easyui-tree">
                 	<li>
-                		 <span><a href="#">用户管理</a></span>
+                		 <span><a target="mainFrame" href="/validate/admin/manage">用户管理</a></span>
                 	</li>
                 	<li>
                 		<span><a target="mainFrame" href="/validate/department/manage">组织机构管理</a></span>

@@ -22,4 +22,6 @@ public interface DepartmentService {
 	
 	public int deleteDepartmentInfo(int id);
 	
+	public int updateDepartmentInfo(Department department);
+	
 }
