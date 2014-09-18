@@ -48,8 +48,54 @@ public class AdminController {
 	
 	@RequestMapping(value="/data",method = RequestMethod.POST)
 	public void adminData(HttpServletResponse resp){
-		ModelAndView mav = new ModelAndView();
 		Admin admin = new Admin();
+		admin.setUsername(null);
+		admin.setStatus(-1);
+		admin.setIsInitpwd(-1);
+		admin.setDepartmentId(-1);
+		admin.setPage(-1);
+		List<Admin> adminAllList = adminService.getAllAdminList(admin);
+		admin.setPage(0);
+		admin.setPageNum(PAGE_NUM);
+		List<Admin> adminList = adminService.getAllAdminList(admin);
+		for(Admin admins : adminList){
+			Department department = new Department();
+			department.setId(admins.getDepartmentId());
+			Department departmentInfo = departmentService.getDepartmentInfoById(department);
+			if(departmentInfo!=null){
+				admins.setDepartmentName(departmentInfo.getDepartmentName());
+			}
+		}
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Gson gson = new Gson();
+		String data=null;
+		resultMap.put("total", adminList.size());
+		resultMap.put("rows", adminList);
+		data = gson.toJson(resultMap);
+        resp.setContentType("application/Json");
+        resp.setCharacterEncoding("UTF-8");  
+        resp.setHeader("Cache-Control", "no-cache"); 
+        PrintWriter out;
+        try { 
+            out = resp.getWriter();  
+            out.print(data);
+       } catch (IOException e) {  
+            e.printStackTrace();  
+       }
+	}
+	
+	@RequestMapping(value="/searchdata",method = RequestMethod.POST)
+	public void adminSearchdata(HttpServletResponse resp,@RequestParam(value="username",required=false)String username,@RequestParam(value="departmentId",required=false)String departmentId,@RequestParam(value="status",required=false)String status,
+			@RequestParam(value="isInitpwd",required=false)String isInitpwd){
+		username = Inputs.trimToNull(username);
+		departmentId = Inputs.trimToNull(departmentId);
+		isInitpwd = Inputs.trimToNull(isInitpwd);
+		status = Inputs.trimToNull(status);
+		Admin admin = new Admin();
+		admin.setUsername(username);
+		admin.setStatus(Integer.parseInt(status));
+		admin.setIsInitpwd(Integer.parseInt(isInitpwd));
+		admin.setDepartmentId(Integer.parseInt(departmentId));
 		admin.setPage(-1);
 		List<Admin> adminAllList = adminService.getAllAdminList(admin);
 		admin.setPage(0);
@@ -83,7 +129,7 @@ public class AdminController {
 	
 	@RequestMapping(value="/add",method = RequestMethod.POST)
 	public void addAdmin(HttpServletResponse resp,@RequestParam("username")String username,@RequestParam(value="name",required=false)String name,@RequestParam(value="phone",required=false)String phone,
-			@RequestParam(value="birthDay",required=false)String birthDay,@RequestParam(value="email",required=false)String email,@RequestParam(value="departmentName",required=false)int departmentName) throws ParseException{
+			@RequestParam(value="birthDay",required=false)String birthDay,@RequestParam(value="email",required=false)String email,@RequestParam("departmentName")int departmentName) throws ParseException{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		username = Inputs.trimToNull(username);
 		name = Inputs.trimToNull(name);
@@ -151,9 +197,14 @@ public class AdminController {
 	public void getAdminInfo(HttpServletResponse resp,@RequestParam("id") int id){
 		Admin admin=adminService.getAdminById(id);
 		Department department = new Department();
-		department.setId(id);
+		department.setId(admin.getDepartmentId());
 		Department departmentInfo = departmentService.getDepartmentInfoById(department);
-		admin.setDepartmentName(departmentInfo.getDepartmentName());
+		if(departmentInfo!=null){
+			admin.setDepartmentName(departmentInfo.getDepartmentName());
+		}
+		if(admin.getIsInitpwd()==1){
+			admin.setInitPassword("密码已修改");
+		}
 		Gson gson = new Gson();
         String list1 = gson.toJson(admin);
         resp.setContentType("application/Json");
@@ -170,21 +221,33 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/update",method = RequestMethod.POST)
-	public void updateAdmin(HttpServletResponse resp,@RequestParam("username")String username,@RequestParam("name")String name,@RequestParam("id")int id,@RequestParam("phone")String phone,
-			@RequestParam("birthDay")String birthDay,@RequestParam("email")String email,@RequestParam(value="departmentName",required=false)int departmentName) throws ParseException{
+	public void updateAdmin(HttpServletResponse resp,@RequestParam(value="username",required=false)String username,@RequestParam(value="name",required=false)String name,
+			@RequestParam("id")int id,@RequestParam(value="phone",required=false)String phone,
+			@RequestParam(value="birthDay",required=false)String birthDay,@RequestParam(value="email",required=false)String email,
+			@RequestParam(value="departmentName",required=false)String departmentName) throws ParseException{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		username = Inputs.trimToNull(username);
 		name = Inputs.trimToNull(name);
 		phone = Inputs.trimToNull(phone);
 		email = Inputs.trimToNull(email);
+		departmentName = Inputs.trimToNull(departmentName);
 		birthDay = Inputs.trimToNull(birthDay);
 		Date birthday = null;
 		if(birthDay!=null){
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			birthday = sdf.parse(birthDay);
 		}
+		int departmentId=0;
+		try{
+			departmentId = Integer.parseInt(departmentName);
+		}catch(Exception e){
+			Department department = new Department();
+			department.setDepartmentName(departmentName);
+			departmentId = departmentService.getDepartmentIdByName(department);
+		}
 		Admin admin = adminService.getAdminById(id);
-		Admin adminInfo = getAdmin(name, username, admin.getPassword(), email,phone, 0, admin.getInitPassword(), 0, birthday,departmentName,null,0, PAGE_NUM);
+		Admin adminInfo = getAdmin(name, username, admin.getPassword(), email,phone, admin.getStatus(), admin.getInitPassword(), admin.getIsInitpwd(), birthday,departmentId,null,0, PAGE_NUM);
+		adminInfo.setId(id);
 		int result = adminService.updateAdminInfo(adminInfo);
 		jsonMap.put("result", result);
 		Gson gson = new Gson();
@@ -218,6 +281,37 @@ public class AdminController {
 		}else{
 			jsonMap.put("success", false);
 			jsonMap.put("errorMsg", "删除失败!");
+		}
+		Gson gson = new Gson();
+        String list1 = gson.toJson(jsonMap);
+        resp.setContentType("application/Json");
+        resp.setCharacterEncoding("UTF-8");  
+        resp.setHeader("Cache-Control", "no-cache"); 
+        PrintWriter out;
+        try { 
+            out = resp.getWriter();  
+            out.print(list1);
+            // 用于返回对象参数 
+       } catch (IOException e) {  
+            e.printStackTrace();  
+       }
+	}
+	
+	@RequestMapping(value="/newpassword",method = RequestMethod.POST)
+	public void adminNewpassword(@RequestParam("id")int id,HttpServletResponse resp){
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		String initPassword = RandomPwdUtil.getRandomPassword(8);
+		String password = Md5Util.digestMD5(initPassword);
+		Admin admin = new Admin();
+		admin.setId(id);
+		admin.setInitPassword(initPassword);
+		admin.setPassword(password);
+		int i = adminService.adminNewpassword(admin);
+		if(i>0){
+			jsonMap.put("success", true);
+		}else{
+			jsonMap.put("success", false);
+			jsonMap.put("errorMsg", "重置失败!");
 		}
 		Gson gson = new Gson();
         String list1 = gson.toJson(jsonMap);

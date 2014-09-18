@@ -9,6 +9,7 @@
 	<title>组织结构管理</title>
 	<script src="../../ui/jquery.min.js" type="text/javascript"></script>
     <script src="../../ui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../ui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
     <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript">

@@ -9,6 +9,7 @@
 	<title>组织结构管理</title>
 	<script src="../../ui/jquery.min.js" type="text/javascript"></script>
     <script src="../../ui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../ui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
     <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
     <style type="text/css"> 
@@ -66,8 +67,12 @@
  								var a = '<a href="#" departmentId="'+row.id+'" departmentName="'+row.departmentName+'"  onclick="newrow(this)">新增</a> ';
  								var e = '<a href="#" departmentId="'+row.id+'" departmentName="'+row.departmentName+'" departmentDesc="'+row.departmentDesc+'" onclick="editrow(this)">编辑</a> ';
  								if(row.state=='open'){
- 									var d = '<a href="#" departmentId="'+row.id+'" onclick="deleterow(this)">删除</a>';
- 									return a+e+d;
+ 									if(row.id==-1){
+ 										return a;
+ 									}else{
+ 										var d = '<a href="#" departmentId="'+row.id+'" onclick="deleterow(this)">删除</a>';
+ 										return a+e+d;
+ 									}
  								}else{
  									return a+e;
  								}
@@ -92,15 +97,6 @@
  		        }  
  		    });  
     	});
-    	/* function getRowIndex(target){
-    		var tr = $(target).closest('tr.datagrid-row');
-    		return parseInt(tr.attr('datagrid-row-index'));
-    	}
-    	function editrow(target){
-    		var data = target.attributes;
-    		var value=data.getNamedItem("departmentName").value;
-    		$('#tt').treegrid('beginEdit', getRowIndex(target));
-    	} */
     	function query(){ 
     		var departmentName=$('#departmentName').combobox('getValue');
     		if(departmentName==undefined){
@@ -129,7 +125,7 @@
              		text: '提交', 
              		iconCls: 'icon-ok', 
              		handler: function() { 
-             			editdata();
+             			savedata();
              		} 
              		}, { 
              		text: '取消', 
@@ -180,7 +176,9 @@
                      if (obj.result == "1") {
                          $.messager.alert("提示信息", "操作成功");
                          $("#dlg").dialog("close");
-                         $("#tt").treegrid("load");
+                         $.post('/validate/department/searchdata',{departmentName:null},function(data){ 
+                  			$('#tt').treegrid('loadData',data); 
+                  		},'json');
                      }
                      else {
                          $.messager.alert("提示信息", "操作失败");
@@ -199,7 +197,9 @@
                      if (obj.result == "1") {
                          $.messager.alert("提示信息", "操作成功");
                          $("#dlg").dialog("close");
-                         $("#tt").treegrid("load");
+                         $.post('/validate/department/searchdata',{departmentName:null},function(data){ 
+                  			$('#tt').treegrid('loadData',data); 
+                  		},'json');
                      }
                      else {
                          $.messager.alert("提示信息", "操作失败");
@@ -214,7 +214,9 @@
                  if (r) {
                      $.post('/validate/department/delete', { id: departmentId }, function (result) {
                          if (result.success) {
-                             $('#tt').treegrid('reload');// reload the user data  
+                        	 $.post('/validate/department/searchdata',{departmentName:null},function(data){ 
+                     			$('#tt').treegrid('loadData',data); 
+                     		},'json');// reload the user data  
                          } else {
                              $.messager.show({   // show error message  
                                  title: 'Error',

@@ -9,6 +9,7 @@
 	<title>用户管理</title>
 	<script src="../../ui/jquery.min.js" type="text/javascript"></script>
     <script src="../../ui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../ui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
     <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
     <style type="text/css"> 
@@ -45,9 +46,11 @@
 	    	toolbar:[{ 
 			 		text: '用户名： <input type="text" id="usernameq" name="usernameq" style="width:100px;"></input>' 
 			 	},{ 
-			 		text: '是否启用： <select id="status" name="status" style="width:100px;"></select>' 
+			 		text: '是否启用： <select id="statusq" name="status" style="width:100px;"><option value="-1">全部</option><option value="0">禁用</option><option value="1">启用</option></select>' 
 			 	},{ 
-			 		text: '是否为初始密码： <select id="is_initpwd" name="is_initpwd" style="width:100px;"></select>' 
+			 		text: '是否为初始密码： <select id="isInitpwdq" name="isInitpwd" style="width:100px;"><option value="-1">全部</option><option value="0">是</option><option value="1">否</option></select>' 
+			 	},{ 
+			 		text: '组织机构： <input type="text" id="departmentIdq" name="departmentId" style="width:100px;"></input>' 
 			 	}, { 
 			 	id: 'searchBtn', 
 			 	text: '查询', 
@@ -108,10 +111,38 @@
 		    		$('#departmentName').combotree('tree').tree('options').url = url; 
 		    		return true; 
 		    }
-	    });  
+	    }); 
+	    $('#departmentIdq').combotree({
+	    	url: '/validate/department/querycombotreedata?departmentName=',
+	    	valueField: 'id',
+            textField: 'text',
+	    	required: false,
+	    	prerendered:true,
+	    	onBeforeExpand:function(row){
+		    		var url = '/validate/department/querycombotreedata?departmentName='+row.departmentName; 
+		    		$('#departmentIdq').combotree('tree').tree('options').url = url; 
+		    		return true; 
+		    }
+	    }); 
     });
+    function query(){ 
+		var departmentId=$('#departmentIdq').combobox('getValue');
+		if(departmentId==undefined){
+			departmentId=-1;
+		}else if(departmentId==""){
+			departmentId=-1;
+		}
+		var userName=$('#usernameq').val();
+		var status=$('#statusq').val();
+		var isInitpwd=$('#isInitpwdq').val();
+		$.post('/validate/admin/searchdata',{departmentId:departmentId,username:userName,status:status,isInitpwd:isInitpwd},function(data){ 
+			$('#tt').datagrid('loadData',data); 
+		},'json'); 
+	} 
+    
     function addrow(data){
     	$("#username").removeAttr('readonly');
+    	$("#password").attr('style','display:none');
     	$("#dlg").dialog({
         	open:true,
         	width:400,
@@ -156,6 +187,7 @@
     }
     function editrow(data){
     	$("#username").attr('readonly','readonly');
+    	$("#password").attr('style','display:block');
     	$("#dlg").dialog({
         	open:true,
         	width:400,
@@ -183,7 +215,7 @@
     }
     function editdata() {
         $("#fm").form("submit", {
-            url: "/validate/department/doadd",
+            url: "/validate/admin/update",
             onsubmit: function () {
                 return $(this).form("validate");
             },
@@ -262,6 +294,23 @@
             }
         });    
     }
+    function newpassword(){
+    	$.messager.confirm('警告', '你确定重置该用户密码吗?', function (r) {
+            if (r) {
+                $.post('/validate/admin/newpassword', { id: $("#id").val() }, function (result) {
+                    if (result.success) {
+                    	$("#dlg").dialog("close");
+                        $('#tt').datagrid('reload');// reload the user data  
+                    } else {
+                        $.messager.show({   // show error message  
+                            title: 'Error',
+                            msg: result.errorMsg
+                        });
+                    }
+                }, 'json');
+            }
+        }); 
+    }
     </script>
 </head>
 <body>
@@ -274,6 +323,10 @@
        <div class="fitem"> 
            <label>用户名：</label> 
            <input name="username" id="username" class="easyui-validatebox" required="true"/> 
+       </div>
+       <div class="fitem" id="password" style="display: none;"> 
+           <label>初始密码：</label> 
+           <input name="initPassword" class="easyui-validatebox" value="" readonly="readonly"/><a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-edit" onclick="newpassword()" plain="true">重置</a> 
        </div> 
        <div class="fitem"> 
 			<label>姓名:</label>
@@ -281,7 +334,7 @@
        </div> 
        <div class="fitem"> 
 			<label>出生日期：</label>
-			<input name="birthDay" class="easyui-validatebox" value=""></input>
+			<input name="birthDay" class="easyui-datebox" value=""></input>
        </div> 
        <div class="fitem"> 
 			<label>电话:</label>
@@ -295,7 +348,7 @@
 			<label>所属机构:</label>
 			<input name="departmentName" id="departmentName" value=""></input>
        </div> 
-       <input type=hidden class="easyui-validatebox" name="id" value="" /> 
+       <input type="hidden" class="easyui-validatebox" name="id" id="id" value="" /> 
        </form> 
    </div>
 </body>

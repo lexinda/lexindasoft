@@ -22,5 +22,7 @@ public interface AdminDao {
 	public Admin login(Admin admin);
 	
 	public List<Admin> getAllAdminList(Admin admin);
+	
+	public int adminNewpassword(Admin admin);
 		
 }

@@ -22,4 +22,6 @@ public interface AdminService {
 	
 	public List<Admin> getAllAdminList(Admin admin);
 	
+	public int adminNewpassword(Admin admin);
+	
 }

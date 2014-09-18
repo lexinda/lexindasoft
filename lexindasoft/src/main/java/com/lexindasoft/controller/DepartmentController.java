@@ -43,7 +43,13 @@ public class DepartmentController {
 	@RequestMapping(value="/data",method = RequestMethod.POST)
 	public void departmentData(HttpServletResponse resp,@RequestParam("departmentName") String departmentName){
 		Department department = new Department();
-		int id=1;
+		Department rootDepartment = new Department();
+		rootDepartment.setId(-1);
+		rootDepartment.setDepartmentName("全部");
+		rootDepartment.setDepartmentDesc("全部");
+		rootDepartment.setLevelId(0);
+		rootDepartment.setState("open");
+		int id=-1;
 		departmentName = Inputs.trimToNull(departmentName);
 		if(departmentName!=null){
 			department.setDepartmentName(departmentName);
@@ -61,13 +67,15 @@ public class DepartmentController {
 			}
 			
 		}
-		Map<String,Object> resultMap = new HashMap<String,Object>();
+		rootDepartment.setChildren(departmentList);
+		/*Map<String,Object> resultMap = new HashMap<String,Object>();*/
 		Gson gson = new Gson();
 		String data=null;
-		if(id==1){
-			resultMap.put("total", departmentList.size());
-			resultMap.put("rows", departmentList);
-			data = gson.toJson(resultMap);
+		if(id==-1){
+			//无根节点
+			/*resultMap.put("total", departmentList.size());
+			resultMap.put("rows", departmentList);*/
+			data = "["+gson.toJson(rootDepartment)+"]";
 		}else{
 			data = gson.toJson(departmentList);
 		}
@@ -82,11 +90,18 @@ public class DepartmentController {
             e.printStackTrace();  
        }
 	}
-	//combotree加载数据
-		@RequestMapping(value="/combotreedata",method = RequestMethod.POST)
-		public void departmentCombotreeData(HttpServletResponse resp,@RequestParam("departmentName") String departmentName){
+	//combotree查询数据
+		@RequestMapping(value="/querycombotreedata",method = RequestMethod.POST)
+		public void departmentQueryCombotreeData(HttpServletResponse resp,@RequestParam("departmentName") String departmentName){
 			Department department = new Department();
-			int id=1;
+			Department rootDepartment = new Department();
+			rootDepartment.setId(-1);
+			rootDepartment.setDepartmentName("全部");
+			rootDepartment.setText("全部");
+			rootDepartment.setDepartmentDesc("全部");
+			rootDepartment.setLevelId(0);
+			rootDepartment.setState("open");
+			int id=-1;
 			departmentName = Inputs.trimToNull(departmentName);
 			if(departmentName!=null){
 				department.setDepartmentName(departmentName);
@@ -106,7 +121,12 @@ public class DepartmentController {
 			}
 			Gson gson = new Gson();
 			String data=null;
-			data = gson.toJson(departmentList);
+			if(id==-1){
+				rootDepartment.setChildren(departmentList);
+				data = "["+gson.toJson(rootDepartment)+"]";
+			}else{
+				data = gson.toJson(departmentList);
+			}
 	        resp.setContentType("application/Json");
 	        resp.setCharacterEncoding("UTF-8");  
 	        resp.setHeader("Cache-Control", "no-cache"); 
@@ -118,11 +138,53 @@ public class DepartmentController {
 	            e.printStackTrace();  
 	       }
 		}
+		//combotree加载数据
+				@RequestMapping(value="/combotreedata",method = RequestMethod.POST)
+				public void departmentCombotreeData(HttpServletResponse resp,@RequestParam("departmentName") String departmentName){
+					Department department = new Department();
+					int id=-1;
+					departmentName = Inputs.trimToNull(departmentName);
+					if(departmentName!=null){
+						department.setDepartmentName(departmentName);
+						id = departmentService.getDepartmentIdByName(department);
+					}
+					department.setId(id);
+					List<Department> departmentList = departmentService.getDepartmentInfo(department);
+					for(Department departments:departmentList){
+						department.setId(departments.getId());
+						List<Department> childDepartment = departmentService.hasChildDepartmentInfo(departments);
+						if(childDepartment.size()>0){
+							departments.setState("closed");
+						}else{
+							departments.setState("open");
+						}
+						departments.setText(departments.getDepartmentName());
+					}
+					Gson gson = new Gson();
+					String data=null;
+					data = gson.toJson(departmentList);
+			        resp.setContentType("application/Json");
+			        resp.setCharacterEncoding("UTF-8");  
+			        resp.setHeader("Cache-Control", "no-cache"); 
+			        PrintWriter out;
+			        try { 
+			            out = resp.getWriter();  
+			            out.print(data);
+			       } catch (IOException e) {  
+			            e.printStackTrace();  
+			       }
+				}
 	//查询按钮
 	@RequestMapping(value="/searchdata",method = RequestMethod.POST)
 	public void departmentSearchData(HttpServletResponse resp,@RequestParam("departmentName") String departmentName){
 		Department department = new Department();
-		int id=1;
+		Department rootDepartment = new Department();
+		rootDepartment.setId(-1);
+		rootDepartment.setDepartmentName("全部");
+		rootDepartment.setDepartmentDesc("全部");
+		rootDepartment.setLevelId(0);
+		rootDepartment.setState("open");
+		int id=-1;
 		departmentName = Inputs.trimToNull(departmentName);
 		if(departmentName!=null){
 			department.setDepartmentName(departmentName);
@@ -130,7 +192,7 @@ public class DepartmentController {
 		}
 		department.setId(id);
 		List<Department> departmentList = new ArrayList<Department>();
-		if(id==1){
+		if(id==-1){
 			departmentList = departmentService.getDepartmentInfo(department);
 		}else{
 			Department departmentInfo = departmentService.getDepartmentInfoById(department);
@@ -147,13 +209,15 @@ public class DepartmentController {
 			}
 			
 		}
-		Map<String,Object> resultMap = new HashMap<String,Object>();
-		Gson gson = new Gson();
+/*		Map<String,Object> resultMap = new HashMap<String,Object>();
+*/		Gson gson = new Gson();
 		String data=null;
-		if(id==1){
-			resultMap.put("total", departmentList.size());
+		if(id==-1){
+			/*resultMap.put("total", departmentList.size());
 			resultMap.put("rows", departmentList);
-			data = gson.toJson(resultMap);
+			data = gson.toJson(resultMap);*/
+			rootDepartment.setChildren(departmentList);
+			data = "["+gson.toJson(rootDepartment)+"]";
 		}else{
 			data = gson.toJson(departmentList);
 		}
@@ -199,10 +263,15 @@ public class DepartmentController {
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		logger.debug("----"+parentId+"----------"+departmentName+"-----------"+departmentDesc);
 		Department departmentInfo = new Department();
-		departmentInfo.setId(parentId);
-		Department department = departmentService.getDepartmentInfoById(departmentInfo);
-		departmentInfo.setParentId(department.getId());
-		departmentInfo.setLevelId(department.getLevelId()+1);
+		if(parentId == -1){
+			departmentInfo.setParentId(-1);
+			departmentInfo.setLevelId(1);
+		}else{
+			departmentInfo.setId(parentId);
+			Department department = departmentService.getDepartmentInfoById(departmentInfo);
+			departmentInfo.setParentId(department.getId());
+			departmentInfo.setLevelId(department.getLevelId()+1);
+		}
 		departmentInfo.setDepartmentName(departmentName);
 		departmentInfo.setDepartmentDesc(departmentDesc);
 		int i = departmentService.insertDepartmentInfo(departmentInfo);

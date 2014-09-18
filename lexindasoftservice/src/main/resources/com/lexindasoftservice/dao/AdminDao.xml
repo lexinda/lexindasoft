@@ -109,11 +109,25 @@
 		<if test="username != null">
 			and username like CONCAT('%',#{username},'%')
 		</if>
-		
+		<if test="status != -1">
+			and status = #{status}
+		</if>
+		<if test="isInitpwd != -1">
+			and is_initpwd = #{isInitpwd}
+		</if>
+		<if test="departmentId != -1">
+			and department_id = #{departmentId}
+		</if>
 		<if test="page != -1">
 			limit #{page},#{pageNum}
 		</if>
 		
 	</select>
+	
+	<update id="adminNewpassword" parameterType="Admin">
+		UPDATE admin SET password = #{password},
+		init_password = #{initPassword},is_initpwd=0,update_pwdtime=now(), update_time = now() 
+		WHERE id = #{id}
+	</update>
 
 </mapper>  
