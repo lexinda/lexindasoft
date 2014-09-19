@@ -44,7 +44,7 @@
     			 }, 
     			 */ 
  			    url:'/validate/department/data?departmentName=',  
- 			 	idField:'department',
+ 			 	idField:'id',//不可修改
  			 	title:'组织机构',
  			 	iconCls:'icon-save',
  			 	toolbar:[{ 

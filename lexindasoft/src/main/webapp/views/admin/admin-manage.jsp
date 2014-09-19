@@ -39,7 +39,7 @@
     <script type="text/javascript">
     $(function(){
 	    $('#admintable').datagrid({
-	    	idField:'admin',
+	    	idField:'id',//不可修改
 			iconCls:'icon-save',
 	    	title:'用户管理',
 	    	url:'/validate/admin/data',

@@ -46,35 +46,43 @@ public class MenuController {
 	@RequestMapping(value="/data",method = RequestMethod.POST)
 	public void departmentData(HttpServletResponse resp,@RequestParam("menuName") String menuName){
 		Menu menu = new Menu();
-		int id = -1;
+		Menu rootMenu = new Menu();
+		rootMenu.setId(-1);
+		rootMenu.setMenuName("全部");
+		rootMenu.setMenuUrl("全部");
+		rootMenu.setParentId(0);
+		rootMenu.setLevelId(0);
+		rootMenu.setState("open");
+		int id=-1;
 		menuName = Inputs.trimToNull(menuName);
 		if(menuName!=null){
 			menu.setMenuName(menuName);
-			id=menuService.getMenuIdByName(menu);
+			id = menuService.getMenuIdByName(menu);
 		}
 		menu.setId(id);
 		List<Menu> menuList = menuService.getMenuInfo(menu);
 		for(Menu menus:menuList){
 			menu.setId(menus.getId());
-			List<Menu> childDepartment = menuService.hasChildMenuInfo(menus);
-			if(childDepartment.size()>0){
+			List<Menu> childMenu = menuService.hasChildMenuInfo(menus);
+			if(childMenu.size()>0){
 				menus.setState("closed");
 			}else{
 				menus.setState("open");
 			}
 			
 		}
-		Map<String,Object> resultMap = new HashMap<String,Object>();
+		rootMenu.setChildren(menuList);
+		/*Map<String,Object> resultMap = new HashMap<String,Object>();*/
 		Gson gson = new Gson();
 		String data=null;
 		if(id==-1){
-			resultMap.put("total", menuList.size());
-			resultMap.put("rows", menuList);
-			data = gson.toJson(resultMap);
+			//无根节点
+			/*resultMap.put("total", departmentList.size());
+			resultMap.put("rows", departmentList);*/
+			data = "["+gson.toJson(rootMenu)+"]";
 		}else{
 			data = gson.toJson(menuList);
 		}
-		System.out.println(data);
         resp.setContentType("application/Json");
         resp.setCharacterEncoding("UTF-8");  
         resp.setHeader("Cache-Control", "no-cache"); 
@@ -172,11 +180,18 @@ public class MenuController {
 	@RequestMapping(value="/searchdata",method = RequestMethod.POST)
 	public void departmentSearchData(HttpServletResponse resp,@RequestParam("menuName") String menuName){
 		Menu menu = new Menu();
-		int id = -1;
+		Menu rootMenu = new Menu();
+		rootMenu.setId(-1);
+		rootMenu.setMenuName("全部");
+		rootMenu.setMenuUrl("全部");
+		rootMenu.setParentId(0);
+		rootMenu.setLevelId(0);
+		rootMenu.setState("open");
+		int id=-1;
 		menuName = Inputs.trimToNull(menuName);
 		if(menuName!=null){
 			menu.setMenuName(menuName);
-			id=menuService.getMenuIdByName(menu);
+			id = menuService.getMenuIdByName(menu);
 		}
 		menu.setId(id);
 		List<Menu> menuList = new ArrayList<Menu>();
@@ -186,27 +201,29 @@ public class MenuController {
 			Menu menuInfo = menuService.getMenuInfoById(menu);
 			menuList.add(menuInfo);
 		}
+		
 		for(Menu menus:menuList){
 			menu.setId(menus.getId());
-			List<Menu> childDepartment = menuService.hasChildMenuInfo(menus);
-			if(childDepartment.size()>0){
+			List<Menu> childMenu = menuService.hasChildMenuInfo(menus);
+			if(childMenu.size()>0){
 				menus.setState("closed");
 			}else{
 				menus.setState("open");
 			}
 			
 		}
-		Map<String,Object> resultMap = new HashMap<String,Object>();
-		Gson gson = new Gson();
+/*		Map<String,Object> resultMap = new HashMap<String,Object>();
+*/		Gson gson = new Gson();
 		String data=null;
 		if(id==-1){
-			resultMap.put("total", menuList.size());
-			resultMap.put("rows", menuList);
-			data = gson.toJson(resultMap);
+			/*resultMap.put("total", departmentList.size());
+			resultMap.put("rows", departmentList);
+			data = gson.toJson(resultMap);*/
+			rootMenu.setChildren(menuList);
+			data = "["+gson.toJson(rootMenu)+"]";
 		}else{
 			data = gson.toJson(menuList);
 		}
-		System.out.println(data);
         resp.setContentType("application/Json");
         resp.setCharacterEncoding("UTF-8");  
         resp.setHeader("Cache-Control", "no-cache"); 

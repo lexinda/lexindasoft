@@ -44,11 +44,11 @@
     			 }, 
     			 */ 
  			    url:'/validate/menu/data?menuName=',  
- 			 	idField:'menu',
+ 			 	idField:'id',//修改会出错
  			 	title:'菜单',
  			 	iconCls:'icon-save',
  			 	toolbar:[{ 
- 			 		text: '机构名称： <select id="menuName" name="menuName" style="width:200px;"></select>' 
+ 			 		text: '机构名称： <select id="menuNameq" name="menuNameq" style="width:200px;"></select>' 
  			 	}, { 
  			 		id: 'searchBtn', 
  			 		text: '查询', 
@@ -56,14 +56,7 @@
  			 		handler: function(){ 
  			 		query(); 
  			 	} 
- 			 	},{ 
- 	 			 	id: 'searchBtn', 
- 	 			 	text: '新增一级菜单', 
- 	 			 	iconCls:'icon-add',
- 	 			 	handler: function(){ 
- 	 			 		newrow(this);
- 	 			 } 
- 	 			}],
+ 			 	}],
  			 	fit:'true',
  			    treeField:'menuName', 
  			    columns:[[  
@@ -92,24 +85,24 @@
  		    		return true; 
  		    	}
  			});  
-    		 $('#menuName').combobox({  
+    		 $('#menuNameq').combobox({  
  		        //url:urlStr,  
  		        valueField:'menuName',  
  		        textField:'menuName',  
  		        onChange:function (newValue, oldValue){  
  		            if(newValue !=null){  
  		                //alert(newValue+oldValue);  
- 		                $("#menuName").combobox("reload","/validate/menu/getComboxdata?menuName="+newValue); //encodeURIComponent(newValue));  
+ 		                $("#menuNameq").combobox("reload","/validate/menu/getComboxdata?menuName="+newValue); //encodeURIComponent(newValue));  
  		            }  
  		        }  
  		    });  
     	});
     	function query(){ 
-    		var menuName=$('#menuName').combobox('getValue');
+    		var menuName=$('#menuNameq').combobox('getValue');
     		if(menuName==undefined){
     			menuName="";
     		}
-    		$.post('/validate/menu/data',{menuName:menuName},function(data){ 
+    		$.post('/validate/menu/searchdata',{menuName:menuName},function(data){ 
     			$('#menutable').treegrid('loadData',data); 
     		},'json'); 
     	} 
@@ -118,15 +111,8 @@
          var type;
          function newrow(target) {
         	var data = target.attributes;
-        	var menuId=data.getNamedItem("menuId");
-        	var menuName;
-        	if(menuId==null){
-        		menuId=-1;
-        		menuName="新增一级菜单";
-        	}else{
-        		menuId = data.getNamedItem("menuId").value;
-        		menuName=data.getNamedItem("menuName").value;
-        	}//.value;
+        	var menuId=data.getNamedItem("menuId").value;
+        	var	menuName=data.getNamedItem("menuName").value;
              $("#menudlg").dialog({
             	open:true,
             	width:400,
