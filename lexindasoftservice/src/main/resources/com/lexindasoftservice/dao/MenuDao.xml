@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lexindasoftservice.dao.MenuDao">
+
+	<!-- 根据id获取自节点信息 -->
+	<select id="getMenuInfo" parameterType="Menu" resultType="Menu">
+		SELECT id,
+			menu_name as menuName,
+			menu_url as menuUrl,
+			menu_method as menuMethod,
+			parent_id as parentId,
+			level_id as levelId,
+			menu_state as menuSate,
+			update_time as updateTime,
+			create_time as createTime
+		FROM `menu`
+		WHERE 1=1 and parent_id=#{id}
+	</select>
+	<!-- 根据id获取组织机构信息 -->
+	<select id="getMenuInfoById" parameterType="Menu" resultType="Menu">
+		SELECT id,
+			menu_name as menuName,
+			menu_url as menuUrl,
+			menu_method as menuMethod,
+			parent_id as parentId,
+			level_id as levelId,
+			menu_state as menuSate,
+			update_time as updateTime,
+			create_time as createTime
+		FROM `menu`
+		WHERE 1=1 and id=#{id}
+	</select>
+	<!-- 根据id获取是否有子节点信息 -->
+	<select id="hasChildMenuInfo" parameterType="Menu" resultType="Menu">
+		SELECT id,
+			menu_name as menuName,
+			menu_url as menuUrl,
+			menu_method as menuMethod,
+			parent_id as parentId,
+			level_id as levelId,
+			menu_state as menuSate,
+			update_time as updateTime,
+			create_time as createTime
+		FROM `menu`
+		WHERE 1=1 and parent_id=#{id}
+	</select>
+	
+	<!-- 根据组织名称获取id -->
+	<select id="getMenuByName" parameterType="Menu" resultType="Menu">
+		SELECT id,
+			menu_name as menuName,
+			menu_url as menuUrl,
+			menu_method as menuMethod,
+			parent_id as parentId,
+			level_id as levelId,
+			menu_state as menuSate,
+			update_time as updateTime,
+			create_time as createTime
+ 		FROM `menu`
+		WHERE 1=1 
+		<if test="menuName != null">
+			and menu_name like CONCAT('%',#{menuName},'%')
+		</if>
+	</select>
+	
+	<!-- 根据组织名称获取id -->
+	<select id="getMenuIdByName" parameterType="Menu" resultType="int">
+		SELECT id
+ 		FROM `menu`
+		WHERE menu_name = #{menuName}
+	</select>
+	
+	<!-- 保存组织机构信息：存在则修改，否则更新 -->
+	<insert id="insertMenuInfo" parameterType="Menu" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `menu`(menu_name,menu_url,menu_method,parent_id,level_id, menu_state,update_time,create_time)
+		VALUES(#{menuName},#{menuUrl},#{menuMethod}, #{parentId},#{levelId},#{menuState},now(),now())
+	</insert>
+	
+	<!-- 删除组织机构信息 -->
+	<insert id="deleteMenuInfo" parameterType="int">
+		delete from `menu` where id=#{id}
+	</insert>
+	
+	<!-- 更新组织机构信息 -->
+	<insert id="updateMenuInfo" parameterType="Menu">
+		update `menu` set menu_name=#{menuName},menu_url=#{menuUrl} where id=#{id}
+	</insert>
+</mapper>  

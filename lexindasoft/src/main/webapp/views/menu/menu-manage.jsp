@@ -5,58 +5,266 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>用户管理</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>组织结构管理</title>
+	<script src="../../ui/jquery.min.js" type="text/javascript"></script>
+    <script src="../../ui/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="../../ui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
+    <style type="text/css"> 
+        #menufm 
+        { 
+            margin: 0; 
+            padding: 10px 30px; 
+        } 
+        .ftitle 
+        { 
+            font-size: 14px; 
+            font-weight: bold; 
+            padding: 5px 0; 
+            margin-bottom: 10px; 
+            border-bottom: 1px solid #ccc; 
+        } 
+        .fitem 
+        { 
+            margin-bottom: 5px; 
+        } 
+        .fitem label 
+        { 
+            display: inline-block; 
+            width: 80px; 
+        } 
+    </style>
+    <script type="text/javascript">
+    	$(function(){
+    		 $('#menutable').treegrid({
+    			 /*{ 
+    			 text: '请选择<select size="1" id="select" name="select"><option>广州</option><option>深圳</option></select>' 
+    			 }, 
+    			 */ 
+ 			    url:'/validate/menu/data?menuName=',  
+ 			 	idField:'menu',
+ 			 	title:'菜单',
+ 			 	iconCls:'icon-save',
+ 			 	toolbar:[{ 
+ 			 		text: '机构名称： <select id="menuName" name="menuName" style="width:200px;"></select>' 
+ 			 	}, { 
+ 			 		id: 'searchBtn', 
+ 			 		text: '查询', 
+ 			 		iconCls:'icon-search', 
+ 			 		handler: function(){ 
+ 			 		query(); 
+ 			 	} 
+ 			 	},{ 
+ 	 			 	id: 'searchBtn', 
+ 	 			 	text: '新增一级菜单', 
+ 	 			 	iconCls:'icon-add',
+ 	 			 	handler: function(){ 
+ 	 			 		newrow(this);
+ 	 			 } 
+ 	 			}],
+ 			 	fit:'true',
+ 			    treeField:'menuName', 
+ 			    columns:[[  
+ 			        {title:'菜单名称',field:'menuName',width:'30%'},  
+ 			        {field:'menuUrl',title:'访问链接',width:'30%'},  
+ 			       	{field:'action',title:'操作',width:'30%',align:'center',
+ 						formatter:function(value,row,index){
+ 								var a = '<a href="#" menuId="'+row.id+'" menuName="'+row.menuName+'"  onclick="newrow(this)">新增</a> ';
+ 								var e = '<a href="#" menuId="'+row.id+'" onclick="editrow(this)">编辑</a> ';
+ 								if(row.state=='open'){
+ 									if(row.id==-1){
+ 										return a;
+ 									}else{
+ 										var d = '<a href="#" menuId="'+row.id+'" onclick="deleterow(this)">删除</a>';
+ 										return a+e+d;
+ 									}
+ 								}else{
+ 									return a+e;
+ 								}
+ 						}
+ 					}
+ 			    ]],
+ 			   onBeforeExpand:function(row){
+ 		    		var url = '/validate/menu/data?menuName='+row.menuName; 
+ 		    		$('#menutable').treegrid('options').url = url; 
+ 		    		return true; 
+ 		    	}
+ 			});  
+    		 $('#menuName').combobox({  
+ 		        //url:urlStr,  
+ 		        valueField:'menuName',  
+ 		        textField:'menuName',  
+ 		        onChange:function (newValue, oldValue){  
+ 		            if(newValue !=null){  
+ 		                //alert(newValue+oldValue);  
+ 		                $("#menuName").combobox("reload","/validate/menu/getComboxdata?menuName="+newValue); //encodeURIComponent(newValue));  
+ 		            }  
+ 		        }  
+ 		    });  
+    	});
+    	function query(){ 
+    		var menuName=$('#menuName').combobox('getValue');
+    		if(menuName==undefined){
+    			menuName="";
+    		}
+    		$.post('/validate/menu/data',{menuName:menuName},function(data){ 
+    			$('#menutable').treegrid('loadData',data); 
+    		},'json'); 
+    	} 
+    	
+    	 var url;
+         var type;
+         function newrow(target) {
+        	var data = target.attributes;
+        	var menuId=data.getNamedItem("menuId");
+        	var menuName;
+        	if(menuId==null){
+        		menuId=-1;
+        		menuName="新增一级菜单";
+        	}else{
+        		menuId = data.getNamedItem("menuId").value;
+        		menuName=data.getNamedItem("menuName").value;
+        	}//.value;
+             $("#menudlg").dialog({
+            	open:true,
+            	width:400,
+            	height:300,
+            	closed: false,  
+            	cache: false,  
+            	modal: true,
+             	title:menuName,
+             	buttons:[{ 
+             		text: '提交', 
+             		iconCls: 'icon-ok', 
+             		handler: function() { 
+             			savedata();
+             		} 
+             		}, { 
+             		text: '取消', 
+             		handler: function() { 
+             			$('#menudlg').dialog('close');
+             		} 
+             	}]
+             });
+             $("#menufm").form("clear");
+             $("#parentId").val(menuId);
+         }
+         function editrow(target) {
+        	 var data = target.attributes;
+        	 var menuId=data.getNamedItem("menuId").value;
+        	 var menuName=data.getNamedItem("menuName").value;
+        	 var menuDesc=data.getNamedItem("menuDesc").value;
+        	 $("#menudlg").dialog({
+              	open:true,
+              	width:400,
+              	height:300,
+              	closed: false,  
+              	cache: false,  
+              	modal: true,
+               	title:menuName,
+               	buttons:[{ 
+             		text: '提交', 
+             		iconCls: 'icon-ok', 
+             		handler: function() { 
+             			editdata();
+             		} 
+             		}, { 
+             		text: '取消', 
+             		handler: function() { 
+             			$('#menudlg').dialog('close');
+             		} 
+             	}]
+               });
+        	 $("#menufm").form('load',{parentId:menuId,menuName:menuName,menuDesc:menuDesc});
+         }
+         function savedata() {
+             $("#menufm").form("submit", {
+                 url: "/validate/menu/add",
+                 onsubmit: function () {
+                     return $(this).form("validate");
+                 },
+                 success: function (data) {
+                	 var obj = jQuery.parseJSON(data);
+                     if (obj.result == "1") {
+                         $.messager.alert("提示信息", "操作成功");
+                         $("#menudlg").dialog("close");
+                         $.post('/validate/menu/searchdata',{menuName:null},function(data){ 
+                  			$('#menutable').treegrid('loadData',data); 
+                  		},'json');
+                     }
+                     else {
+                         $.messager.alert("提示信息", "操作失败");
+                     }
+                 }
+             });
+         }
+         function editdata() {
+             $("#menufm").form("submit", {
+                 url: "/validate/menu/update",
+                 onsubmit: function () {
+                     return $(this).form("validate");
+                 },
+                 success: function (data) {
+                	 var obj = jQuery.parseJSON(data);
+                     if (obj.result == "1") {
+                         $.messager.alert("提示信息", "操作成功");
+                         $("#menudlg").dialog("close");
+                         $.post('/validate/menu/searchdata',{menuName:null},function(data){ 
+                  			$('#menutable').treegrid('loadData',data); 
+                  		},'json');
+                     }
+                     else {
+                         $.messager.alert("提示信息", "操作失败");
+                     }
+                 }
+             });
+         }
+         function deleterow(target) {
+        	 var data = target.attributes;
+        	 var menuId=data.getNamedItem("menuId").value;
+        	 $.messager.confirm('警告', '你确定删除此组织机构吗?', function (r) {
+                 if (r) {
+                     $.post('/validate/menu/delete', { id: menuId }, function (result) {
+                         if (result.success) {
+                        	 $.post('/validate/menu/searchdata',{menuName:null},function(data){ 
+                     			$('#menutable').treegrid('loadData',data); 
+                     		},'json');// reload the user data  
+                         } else {
+                             $.messager.show({   // show error message  
+                                 title: 'Error',
+                                 msg: result.errorMsg
+                             });
+                         }
+                     }, 'json');
+                 }
+             });    
+         }  
+    </script>
 </head>
 <body>
-<div class="pageHeader">
-	<form action="/admin/search" method="post">
-	<div class="searchBar">
-		<table class="searchContent">
-			<tr><td>用户名：<input type="text" name="account"/><button type="submit">查询</button></td></tr>
-		</table>
-	</div>
-	</form>
-</div>
-<div class="pageContent">
-	<div class="panelBar">
-		<ul class="toolBar">
-			<li><a class="add" href="/validate/admin/add" target="navTab"><span>新增用户</span></a></li>
-			<li><a title="是否批量删除?" target="selectedTodo" rel="ids" postType="string" href="/validate/admin/delete" class="delete"><span>批量删除</span></a></li>
-			<li class="line">line</li>
-			<li><a class="icon" href="/admin/excel" target="dwzExport" targetType="navTab" title="是否确定导出！"><span>导出Excel数据</span></a></li>
-		</ul>
-	</div>
-	<table class="table" width="100%" layoutH="138">
-		<thead>
-			<tr>
-				<th width="22"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
-				<th>用户名</th>
-				<th>email</th>
-				<th>创建时间</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-		<thbody>
-			<c:forEach items="${adminList}" var="admin">
-				<tr target="user" rel="${admin.id}">
-					<td><input name="ids" value="${admin.id}" type="checkbox"></td>
-					<td>${admin.account}</td>
-					<td>${admin.email}</td>
-					<td><fmt:formatDate value="${admin.createTime}" pattern="yyyy-MM-dd HH:mm"/></td>
-					<td>
-						<c:if test="${admin.status == 0 }">
-							<a title="禁用状态，点击启用！" target="ajaxTodo" href="/validate/admin/active?id=${admin.id}" class="btnDel">禁用状态，点击启用！</a>
-						</c:if>
-						<c:if test="${admin.status == 1 }">
-							<a title="启用状态，点击禁用！" target="ajaxTodo" href="/validate/admin/active?id=${admin.id}" class="btnSelect">启用状态，点击禁用！</a>
-						</c:if>
-						<a title="查看" target="navTab" href="/validate/admin/edit?id=${admin.id}" class="btnEdit">查看</a>
-					</td>
-				</tr>
-			</c:forEach>
-		</thbody>
-	</table>
-</div>
+	<table id="menutable"></table>
+	
+	<div id="menudlg"> 
+       <form id="menufm" method="post"> 
+       <div class="ftitle"> 
+           	信息编辑 
+       </div> 
+       <div class="fitem"> 
+           <label>菜单名称：</label> 
+           <input name="menuName" id="departmentName" class="easyui-validatebox" required="true" value=""/> 
+       </div> 
+       <div class="fitem"> 
+			<label>菜单链接:</label>
+			<input name="menuUrl" class="easyui-validatebox" required="true" value=""></input>
+       </div>
+       <div class="fitem"> 
+			<label>菜单方法名:</label>
+			<input name="menuMethod" class="easyui-validatebox" required="true" value=""></input>
+       </div> 
+       <input type="hidden" name="parentId" id="parentId" value="" /> 
+       </form> 
+   </div>
 </body>
 </html>

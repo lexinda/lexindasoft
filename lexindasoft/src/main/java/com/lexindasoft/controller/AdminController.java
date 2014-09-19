@@ -31,7 +31,7 @@ import com.lexindasoftservice.utils.RandomPwdUtil;
 @RequestMapping(value="/validate/admin")
 public class AdminController {
 
-	final static int PAGE_NUM=20;
+	final static int PAGE_NUM=10;
 	
 	@Autowired
 	AdminService adminService;
@@ -69,7 +69,7 @@ public class AdminController {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		Gson gson = new Gson();
 		String data=null;
-		resultMap.put("total", adminList.size());
+		resultMap.put("total", adminAllList.size());
 		resultMap.put("rows", adminList);
 		data = gson.toJson(resultMap);
         resp.setContentType("application/Json");
@@ -86,7 +86,7 @@ public class AdminController {
 	
 	@RequestMapping(value="/searchdata",method = RequestMethod.POST)
 	public void adminSearchdata(HttpServletResponse resp,@RequestParam(value="username",required=false)String username,@RequestParam(value="departmentId",required=false)String departmentId,@RequestParam(value="status",required=false)String status,
-			@RequestParam(value="isInitpwd",required=false)String isInitpwd){
+			@RequestParam(value="isInitpwd",required=false)String isInitpwd,@RequestParam(value="pageNumber",required=false)String pageNumber){
 		username = Inputs.trimToNull(username);
 		departmentId = Inputs.trimToNull(departmentId);
 		isInitpwd = Inputs.trimToNull(isInitpwd);
@@ -98,7 +98,12 @@ public class AdminController {
 		admin.setDepartmentId(Integer.parseInt(departmentId));
 		admin.setPage(-1);
 		List<Admin> adminAllList = adminService.getAllAdminList(admin);
-		admin.setPage(0);
+		pageNumber = Inputs.trimToNull(pageNumber);
+		int index =0;
+		if(pageNumber!=null){
+			index = (Integer.parseInt(pageNumber)-1)*PAGE_NUM;
+		}
+		admin.setPage(index);
 		admin.setPageNum(PAGE_NUM);
 		List<Admin> adminList = adminService.getAllAdminList(admin);
 		for(Admin admins : adminList){
@@ -112,7 +117,7 @@ public class AdminController {
 		Map<String,Object> resultMap = new HashMap<String,Object>();
 		Gson gson = new Gson();
 		String data=null;
-		resultMap.put("total", adminList.size());
+		resultMap.put("total", adminAllList.size());
 		resultMap.put("rows", adminList);
 		data = gson.toJson(resultMap);
         resp.setContentType("application/Json");

@@ -13,7 +13,7 @@
     <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
     <style type="text/css"> 
-        #fm 
+        #departmentfm 
         { 
             margin: 0; 
             padding: 10px 30px; 
@@ -38,13 +38,13 @@
     </style>
     <script type="text/javascript">
     	$(function(){
-    		 $('#tt').treegrid({
+    		 $('#departmenttable').treegrid({
     			 /*{ 
     			 text: '请选择<select size="1" id="select" name="select"><option>广州</option><option>深圳</option></select>' 
     			 }, 
     			 */ 
  			    url:'/validate/department/data?departmentName=',  
- 			 	idField:'id',
+ 			 	idField:'department',
  			 	title:'组织机构',
  			 	iconCls:'icon-save',
  			 	toolbar:[{ 
@@ -81,7 +81,7 @@
  			    ]],
  			   onBeforeExpand:function(row){
  		    		var url = '/validate/department/data?departmentName='+row.departmentName; 
- 		    		$('#tt').treegrid('options').url = url; 
+ 		    		$('#departmenttable').treegrid('options').url = url; 
  		    		return true; 
  		    	}
  			});  
@@ -103,7 +103,7 @@
     			departmentName="";
     		}
     		$.post('/validate/department/searchdata',{departmentName:departmentName},function(data){ 
-    			$('#tt').treegrid('loadData',data); 
+    			$('#departmenttable').treegrid('loadData',data); 
     		},'json'); 
     	} 
     	
@@ -113,7 +113,7 @@
         	 var data = target.attributes;
         	 var departmentId=data.getNamedItem("departmentId").value;
         	 var departmentName=data.getNamedItem("departmentName").value;
-             $("#dlg").dialog({
+             $("#departmentdlg").dialog({
             	open:true,
             	width:400,
             	height:300,
@@ -130,11 +130,11 @@
              		}, { 
              		text: '取消', 
              		handler: function() { 
-             			$('#dlg').dialog('close');
+             			$('#departmentdlg').dialog('close');
              		} 
              	}]
              });
-             $("#fm").form("clear");
+             $("#departmentfm").form("clear");
              $("#parentId").val(departmentId);
          }
          function editrow(target) {
@@ -142,7 +142,7 @@
         	 var departmentId=data.getNamedItem("departmentId").value;
         	 var departmentName=data.getNamedItem("departmentName").value;
         	 var departmentDesc=data.getNamedItem("departmentDesc").value;
-        	 $("#dlg").dialog({
+        	 $("#departmentdlg").dialog({
               	open:true,
               	width:400,
               	height:300,
@@ -159,14 +159,14 @@
              		}, { 
              		text: '取消', 
              		handler: function() { 
-             			$('#dlg').dialog('close');
+             			$('#departmentdlg').dialog('close');
              		} 
              	}]
                });
-        	 $("#fm").form('load',{parentId:departmentId,departmentName:departmentName,departmentDesc:departmentDesc});
+        	 $("#departmentfm").form('load',{parentId:departmentId,departmentName:departmentName,departmentDesc:departmentDesc});
          }
          function savedata() {
-             $("#fm").form("submit", {
+             $("#departmentfm").form("submit", {
                  url: "/validate/department/add",
                  onsubmit: function () {
                      return $(this).form("validate");
@@ -175,9 +175,9 @@
                 	 var obj = jQuery.parseJSON(data);
                      if (obj.result == "1") {
                          $.messager.alert("提示信息", "操作成功");
-                         $("#dlg").dialog("close");
+                         $("#departmentdlg").dialog("close");
                          $.post('/validate/department/searchdata',{departmentName:null},function(data){ 
-                  			$('#tt').treegrid('loadData',data); 
+                  			$('#departmenttable').treegrid('loadData',data); 
                   		},'json');
                      }
                      else {
@@ -187,7 +187,7 @@
              });
          }
          function editdata() {
-             $("#fm").form("submit", {
+             $("#departmentfm").form("submit", {
                  url: "/validate/department/update",
                  onsubmit: function () {
                      return $(this).form("validate");
@@ -196,9 +196,9 @@
                 	 var obj = jQuery.parseJSON(data);
                      if (obj.result == "1") {
                          $.messager.alert("提示信息", "操作成功");
-                         $("#dlg").dialog("close");
+                         $("#departmentdlg").dialog("close");
                          $.post('/validate/department/searchdata',{departmentName:null},function(data){ 
-                  			$('#tt').treegrid('loadData',data); 
+                  			$('#departmenttable').treegrid('loadData',data); 
                   		},'json');
                      }
                      else {
@@ -215,7 +215,7 @@
                      $.post('/validate/department/delete', { id: departmentId }, function (result) {
                          if (result.success) {
                         	 $.post('/validate/department/searchdata',{departmentName:null},function(data){ 
-                     			$('#tt').treegrid('loadData',data); 
+                     			$('#departmenttable').treegrid('loadData',data); 
                      		},'json');// reload the user data  
                          } else {
                              $.messager.show({   // show error message  
@@ -230,10 +230,10 @@
     </script>
 </head>
 <body>
-	<table id="tt"></table>
+	<table id="departmenttable"></table>
 	
-	<div id="dlg"> 
-       <form id="fm" method="post"> 
+	<div id="departmentdlg"> 
+       <form id="departmentfm" method="post"> 
        <div class="ftitle"> 
            	信息编辑 
        </div> 

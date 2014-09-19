@@ -13,7 +13,7 @@
     <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
     <style type="text/css"> 
-        #fm 
+        #adminfm 
         { 
             margin: 0; 
             padding: 10px 30px; 
@@ -38,11 +38,13 @@
     </style>
     <script type="text/javascript">
     $(function(){
-	    $('#tt').datagrid({
-	    	idField:'id',
+	    $('#admintable').datagrid({
+	    	idField:'admin',
 			iconCls:'icon-save',
 	    	title:'用户管理',
 	    	url:'/validate/admin/data',
+	    	pagination:true,//分页控件  
+	        rownumbers:true,//行号  
 	    	toolbar:[{ 
 			 		text: '用户名： <input type="text" id="usernameq" name="usernameq" style="width:100px;"></input>' 
 			 	},{ 
@@ -124,6 +126,44 @@
 		    		return true; 
 		    }
 	    }); 
+	  //设置分页控件  
+	    var p = $('#admintable').datagrid('getPager');  
+	    $(p).pagination({  
+	        pageSize: 20,//每页显示的记录条数，默认为10 
+	        showPageList:false,
+	        //pageList: [5,10,15],//可以设置每页记录条数的列表  
+	        beforePageText: '第',//页数文本框前显示的汉字  
+	        afterPageText: '页    共 {pages} 页',  
+	        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录',  
+	        onBeforeRefresh:function(){ 
+	            $(this).pagination('loading'); 
+	            //alert('before refresh'); 
+	            $(this).pagination('loaded'); 
+	        },
+	       onRefresh:function(pageNumber,pageSize){
+	           //alert(pageNumber);
+	           //alert(pageSize);
+	        },
+	       onChangePageSize:function(){
+	           //alert('pagesize changed');
+	        },
+	       onSelectPage:function(pageNumber,pageSize){
+	           //alert(pageNumber+'------------');
+	           //alert(pageSize);
+	           var departmentId=$('#departmentIdq').combobox('getValue');
+		   		if(departmentId==undefined){
+		   			departmentId=-1;
+		   		}else if(departmentId==""){
+		   			departmentId=-1;
+		   		}
+		   		var userName=$('#usernameq').val();
+		   		var status=$('#statusq').val();
+		   		var isInitpwd=$('#isInitpwdq').val();
+		   		$.post('/validate/admin/searchdata',{departmentId:departmentId,username:userName,status:status,isInitpwd:isInitpwd,pageNumber:pageNumber},function(data){ 
+		   			$('#admintable').datagrid('loadData',data); 
+		   		},'json');
+	        }
+	    });  
     });
     function query(){ 
 		var departmentId=$('#departmentIdq').combobox('getValue');
@@ -135,15 +175,15 @@
 		var userName=$('#usernameq').val();
 		var status=$('#statusq').val();
 		var isInitpwd=$('#isInitpwdq').val();
-		$.post('/validate/admin/searchdata',{departmentId:departmentId,username:userName,status:status,isInitpwd:isInitpwd},function(data){ 
-			$('#tt').datagrid('loadData',data); 
+		$.post('/validate/admin/searchdata',{departmentId:departmentId,username:userName,status:status,isInitpwd:isInitpwd,pageNumber:null},function(data){ 
+			$('#admintable').datagrid('loadData',data); 
 		},'json'); 
 	} 
     
     function addrow(data){
     	$("#username").removeAttr('readonly');
     	$("#password").attr('style','display:none');
-    	$("#dlg").dialog({
+    	$("#admindlg").dialog({
         	open:true,
         	width:400,
         	height:330,
@@ -160,14 +200,14 @@
          		}, { 
          		text: '取消', 
          		handler: function() { 
-         			$('#dlg').dialog('close');
+         			$('#admindlg').dialog('close');
          		} 
          	}]
          });
-         $("#fm").form("clear");
+         $("#adminfm").form("clear");
     }
     function savedata() {
-        $("#fm").form("submit", {
+        $("#adminfm").form("submit", {
             url: "/validate/admin/add",
             onsubmit: function () {
                 return $(this).form("validate");
@@ -176,8 +216,8 @@
            	 var obj = jQuery.parseJSON(data);
                 if (obj.result == "1") {
                     $.messager.alert("提示信息", "操作成功");
-                    $("#dlg").dialog("close");
-                    $("#tt").datagrid("load");
+                    $("#admindlg").dialog("close");
+                    $("#admintable").datagrid("load");
                 }
                 else {
                     $.messager.alert("提示信息", "操作失败");
@@ -188,7 +228,7 @@
     function editrow(data){
     	$("#username").attr('readonly','readonly');
     	$("#password").attr('style','display:block');
-    	$("#dlg").dialog({
+    	$("#admindlg").dialog({
         	open:true,
         	width:400,
         	height:330,
@@ -205,16 +245,16 @@
          		}, { 
          		text: '取消', 
          		handler: function() { 
-         			$('#dlg').dialog('close');
+         			$('#admindlg').dialog('close');
          		} 
          	}]
          });
     	$.post('/validate/admin/info', { id: data.id }, function (result) {
-                $('#fm').form('load',result);// reload the user data  
+                $('#adminfm').form('load',result);// reload the user data  
         }, 'json');
     }
     function editdata() {
-        $("#fm").form("submit", {
+        $("#adminfm").form("submit", {
             url: "/validate/admin/update",
             onsubmit: function () {
                 return $(this).form("validate");
@@ -223,8 +263,8 @@
            	 var obj = jQuery.parseJSON(data);
                 if (obj.result == "1") {
                     $.messager.alert("提示信息", "操作成功");
-                    $("#dlg").dialog("close");
-                    $("#tt").datagrid("load");
+                    $("#admindlg").dialog("close");
+                    $("#admintable").datagrid("load");
                 }
                 else {
                     $.messager.alert("提示信息", "操作失败");
@@ -235,7 +275,7 @@
     function usefulrow(data){
     	$.post('/validate/admin/active', { id: data.id }, function (result) {
             if (result.success) {
-                $('#tt').datagrid('reload');// reload the user data  
+                $('#admintable').datagrid('reload');// reload the user data  
             } else {
                 $.messager.show({   // show error message  
                     title: 'Error',
@@ -247,7 +287,7 @@
     function unusefulrow(data){
     	$.post('/validate/admin/active', { id: data.id }, function (result) {
             if (result.success) {
-                $('#tt').datagrid('reload');// reload the user data  
+                $('#admintable').datagrid('reload');// reload the user data  
             } else {
                 $.messager.show({   // show error message  
                     title: 'Error',
@@ -257,7 +297,7 @@
         }, 'json');
     }
     function mostDelete(data){
-    	var checkedItems = $('#tt').datagrid('getChecked');
+    	var checkedItems = $('#admintable').datagrid('getChecked');
     	var names='';
     	$.each(checkedItems, function(index, item){
     		names+=item.id+',';
@@ -266,7 +306,7 @@
             if (r) {
                 $.post('/validate/admin/delete', { ids: names }, function (result) {
                     if (result.success) {
-                        $('#tt').datagrid('reload');// reload the user data  
+                        $('#admintable').datagrid('reload');// reload the user data  
                     } else {
                         $.messager.show({   // show error message  
                             title: 'Error',
@@ -283,7 +323,7 @@
             if (r) {
                 $.post('/validate/admin/delete', { ids: data.id }, function (result) {
                     if (result.success) {
-                        $('#tt').datagrid('reload');// reload the user data  
+                        $('#admintable').datagrid('reload');// reload the user data  
                     } else {
                         $.messager.show({   // show error message  
                             title: 'Error',
@@ -299,8 +339,8 @@
             if (r) {
                 $.post('/validate/admin/newpassword', { id: $("#id").val() }, function (result) {
                     if (result.success) {
-                    	$("#dlg").dialog("close");
-                        $('#tt').datagrid('reload');// reload the user data  
+                    	$("#admindlg").dialog("close");
+                        $('#admintable').datagrid('reload');// reload the user data  
                     } else {
                         $.messager.show({   // show error message  
                             title: 'Error',
@@ -314,9 +354,9 @@
     </script>
 </head>
 <body>
-<table id="tt"></table> 
-<div id="dlg"> 
-       <form id="fm" method="post"> 
+<table id="admintable"></table> 
+<div id="admindlg"> 
+       <form id="adminfm" method="post"> 
        <div class="ftitle"> 
            	信息编辑 
        </div> 
