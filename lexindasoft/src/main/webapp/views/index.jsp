@@ -186,8 +186,19 @@
                 </ul>
             </div>
             <div title="内容管理" iconcls="icon-reload" style="padding: 10px;">
-            <sec:authentication property="name"/>
-            ${userOnline}
+            <%-- <sec:authentication property="name"/>
+            ${userOnline} --%>
+            <ul class="easyui-tree">
+                	<li>
+                		 <span><a target="mainFrame" href="/validate/setup/manage">首页滚动图片</a></span>
+                	</li>
+                	<li>
+                		<span><a target="mainFrame" href="/validate/content/manage">内容分支</a></span>
+                	</li>
+                	<li>
+                		<span><a href="#">加入我们</a></span>
+                	</li>
+                </ul>
             </div>
             <div title="系统管理" iconcls="icon-large-clipart" selected="true">
                 <ul class="easyui-tree">
