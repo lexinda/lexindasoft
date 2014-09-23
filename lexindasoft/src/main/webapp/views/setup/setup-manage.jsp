@@ -15,30 +15,8 @@
      <script src="../../ui/jquery.form.min.js" type="text/javascript"></script>
     <script src="../../ui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
     <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
-    <style type="text/css"> 
-        #menufm 
-        { 
-            margin: 0; 
-            padding: 10px 30px; 
-        } 
-        .ftitle 
-        { 
-            font-size: 14px; 
-            font-weight: bold; 
-            padding: 5px 0; 
-            margin-bottom: 10px; 
-            border-bottom: 1px solid #ccc; 
-        } 
-        .fitem 
-        { 
-            margin-bottom: 5px; 
-        } 
-        .fitem label 
-        { 
-            display: inline-block; 
-            width: 80px; 
-        } 
-    </style>
+    <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
+    <link href="../../ui/themes/demo.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
     $(function(){
     	$('#ImgLogoForm').ajaxForm({ 
@@ -49,7 +27,7 @@
 	    		if(status==1){
 	    			$("#logoDiv").html('<img class="item-img" src="<%=basePath%>'+imagePath+'" />'+
 	    					'<input type="hidden" id="uploadLogoImg" name="uploadLogoImg" value="<%=basePath%>'+imagePath+'"/>'+
-							'<input class="span2" type="button" id="uploadLogo" name="uploadLogo" value="选择图片" onclick="selectImgLogo()"/>');
+							'<a href="#" id="uploadLogo" name="uploadLogo" class="easyui-linkbutton" iconCls="icon-edit" onclick="selectImgLogo()">上传图片</a>');
 	    		}else{
 	    			$("#imgLogoText").text("上传失败！");
 	    		}	
@@ -65,30 +43,43 @@
     </script>
 </head>
 <body>
-       <div id="setupfm"> 
-	       <div class="ftitle"> 
-	           	信息编辑 
-	       </div> 
-	       <div class="fitem"> 
-	           <label>公司logo：</label> 
-	           <div id="logoDiv">
-			   	<input class="span2" type="button" id="uploadLogo" name="uploadLogo" value="选择图片" onclick="selectImgLogo()"/>
-				<span id="imgLogoText" style="color: red;"></span>
-			   </div>
-	       </div>
-	       <div class="fitem"> 
-	           <label>首页滚动图片1：</label> 
-	           <input type="file" name="uploadImg1" id="uploadImg1"  class="easyui-validatebox" validType="fileType['BMP|GIF|JPG|JPEG|ICO|PNG|TIF']" required="true" invalidMessage="请选择(BMP|GIF|JPG|JPEG|ICO|PNG|TIF)等格式的图片"/>
-	       </div> 
-	       <div class="fitem"> 
-				<label>首页滚动图片2:</label>
-				<input type="file" name="uploadImg2" id="uploadImg2"  class="easyui-validatebox" validType="fileType['BMP|GIF|JPG|JPEG|ICO|PNG|TIF']" required="true" invalidMessage="请选择(BMP|GIF|JPG|JPEG|ICO|PNG|TIF)等格式的图片"/>
-	       </div> 
-	       <div class="fitem"> 
-				<label>首页滚动图片3：</label>
-				<input type="file" name="uploadImg3" id="uploadImg3"  class="easyui-validatebox" validType="fileType['BMP|GIF|JPG|JPEG|ICO|PNG|TIF']" required="true" invalidMessage="请选择(BMP|GIF|JPG|JPEG|ICO|PNG|TIF)等格式的图片"/>
-	       </div> 
-       </div> 
+			
+       		<table cellpadding="5">
+                <tr>
+                    <td>公司logo：</td>
+                    <td>
+                    	<div id="logoDiv">
+                    		<img src="<%=basePath%>/ui/setup/logo.png" />
+							<a href="#" id="uploadLogo" name="uploadLogo" class="easyui-linkbutton" iconCls="icon-edit" onclick="selectImgLogo()">上传图片</a>
+							<span id="imgLogoText" style="color: red;"></span>
+			   			</div>
+			   		</td>
+                </tr>
+                <tr>
+                    <td>首页滚动图片1：</td>
+                    <td><div id="logoDiv">
+			   				<input class="span2" type="button" id="uploadLogo" name="uploadLogo" value="选择图片" onclick="selectImgLogo()"/>
+							<span id="imgLogoText" style="color: red;"></span>
+			   			</div>
+			   		</td>
+                </tr>
+                <tr>
+                    <td>首页滚动图片2：</td>
+                    <td><div id="logoDiv">
+			   				<input class="span2" type="button" id="uploadLogo" name="uploadLogo" value="选择图片" onclick="selectImgLogo()"/>
+							<span id="imgLogoText" style="color: red;"></span>
+			   			</div>
+			   		</td>
+                </tr>
+                <tr>
+                    <td>首页滚动图片3：</td>
+                    <td><div id="logoDiv">
+			   				<input class="span2" type="button" id="uploadLogo" name="uploadLogo" value="选择图片" onclick="selectImgLogo()"/>
+							<span id="imgLogoText" style="color: red;"></span>
+			   			</div>
+			   		</td>
+                </tr>
+            </table>
        <div style="display:none">
 			<form id="ImgLogoForm" action="/validate/setup/imglogoupload" method="post" enctype="multipart/form-data">
 				<input id="uploadLogoInfo" type="file" name="uploadLogo" />
