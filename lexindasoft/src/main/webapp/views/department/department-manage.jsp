@@ -12,6 +12,7 @@
     <script src="../../ui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
     <link href="../../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <link href="../../ui/themes/icon.css" rel="stylesheet" type="text/css" />
+    <link href="../../ui/themes/demo.css" rel="stylesheet" type="text/css" />
     <style type="text/css"> 
         #departmentfm 
         { 

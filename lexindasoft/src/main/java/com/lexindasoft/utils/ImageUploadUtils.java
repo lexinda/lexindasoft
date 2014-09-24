@@ -76,7 +76,7 @@ public class ImageUploadUtils {
 	
 	public static String getFilePath(String rootDir, String filePrefix, String extension){
 		String dirPath = rootDir;
-		String fileName = filePrefix + "." + extension;
+		String fileName = filePrefix + ".jpg";
 		File dir = new File(dirPath);
 		if (!dir.exists()) {
 			dir.mkdirs();

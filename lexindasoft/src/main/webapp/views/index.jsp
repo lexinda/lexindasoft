@@ -14,6 +14,7 @@
     <script src="../ui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
     <link href="../ui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
     <link href="../ui/themes/icon.css" rel="stylesheet" type="text/css" />
+    <link href="../../ui/themes/demo.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
     $(document).ready(function () {
         $('.easyui-accordion li a').click(function () {
@@ -193,7 +194,7 @@
                 		 <span><a target="mainFrame" href="/validate/setup/manage">首页滚动图片</a></span>
                 	</li>
                 	<li>
-                		<span><a target="mainFrame" href="/validate/content/manage">内容分支</a></span>
+                		<span><a target="mainFrame" href="/validate/content/manage">新闻管理</a></span>
                 	</li>
                 	<li>
                 		<span><a href="#">加入我们</a></span>

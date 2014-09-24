@@ -12,6 +12,7 @@
 	.login_bar .sub { display:block; width:75px; height:30px; border:none; background:url(../ui/themes/default/images/login_sub.png) no-repeat; cursor:pointer;}
 </style>
 <script src="../ui/jquery-1.7.2.js" type="text/javascript"></script>
+<link href="../../ui/themes/demo.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
   function reloadcode(){
   	var verify=document.getElementById('code');
