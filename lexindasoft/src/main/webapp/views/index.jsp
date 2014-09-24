@@ -197,7 +197,7 @@
                 		<span><a target="mainFrame" href="/validate/content/manage">新闻管理</a></span>
                 	</li>
                 	<li>
-                		<span><a href="#">加入我们</a></span>
+                		<span><a target="mainFrame" href="/validate/join/manage">加入我们</a></span>
                 	</li>
                 </ul>
             </div>
