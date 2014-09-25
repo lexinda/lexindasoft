@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lexindasoftservice.dao.ContentDao">
+
+	<!-- 根据id获取自节点信息 -->
+	<select id="getContentInfo" parameterType="Content" resultType="Content">
+		SELECT id,
+			title as title,
+			simple_title as simpleTitle,
+			title_key as titleKey,
+			content_type as contentType,
+			status,
+			content,
+			create_time as createTime,
+			update_time as updateTime
+		FROM `content`
+		WHERE 1=1 
+			<if test="title!=null">
+				and title like CONCAT('%',#{title},'%')
+			</if>
+			
+			<if test="titleKey!=null">
+				and title_key like CONCAT('%',#{titleKey},'%')
+			</if>
+			
+			<if test="status!=-1">
+				and status = #{status}
+			</if>
+			
+			<if test="contentType!=-1">
+				and content_type = #{contentType}
+			</if>
+			
+			<if test="page!=-1">
+				limit #{page},#{pageNum}
+			</if>
+		
+	</select>
+	<!-- 根据id获取组织机构信息 -->
+	<select id="getContentInfoById" parameterType="int" resultType="Content">
+		SELECT id,
+			title as title,
+			simple_title as simpleTitle,
+			title_key as titleKey,
+			content_type as contentType,
+			status,
+			content,
+			create_time as createTime,
+			update_time as updateTime
+		FROM `content`
+		WHERE 1=1 and id=#{id}
+	</select>
+	
+	<!-- 保存组织机构信息：存在则修改，否则更新 -->
+	<insert id="insertContentInfo" parameterType="Content" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `content`(title,simple_title,title_key,content_type,status,content, create_time,update_time)
+		VALUES(#{title},#{simpleTitle},#{titleKey},#{contentType},#{status},#{content},now(),now())
+	</insert>
+	
+	<!-- 删除组织机构信息 -->
+	<insert id="deleteDepartmentInfo" parameterType="int">
+		delete from `department` where id=#{id}
+	</insert>
+	
+	<!-- 更新组织机构信息 -->
+	<insert id="updateDepartmentInfo" parameterType="Department">
+		update `department` set department_name=#{departmentName},department_desc=#{departmentDesc} where id=#{id}
+	</insert>
+</mapper>  

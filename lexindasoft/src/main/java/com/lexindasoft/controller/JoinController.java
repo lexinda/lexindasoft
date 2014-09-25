@@ -3,11 +3,7 @@ package com.lexindasoft.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,13 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.lexindasoft.utils.ImageUploadUtils;
-import com.lexindasoftservice.model.Admin;
-import com.lexindasoftservice.model.Department;
 import com.lexindasoftservice.service.AdminService;
 import com.lexindasoftservice.service.DepartmentService;
-import com.lexindasoftservice.utils.Inputs;
-import com.lexindasoftservice.utils.Md5Util;
-import com.lexindasoftservice.utils.RandomPwdUtil;
 
 @Controller
 @RequestMapping(value="/validate/join")

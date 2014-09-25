@@ -1,73 +1,74 @@
 package com.lexindasoft.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
-import com.lexindasoft.utils.ImageUploadUtils;
-import com.lexindasoftservice.model.Admin;
+import com.lexindasoftservice.model.Content;
 import com.lexindasoftservice.model.Department;
-import com.lexindasoftservice.service.AdminService;
-import com.lexindasoftservice.service.DepartmentService;
+import com.lexindasoftservice.model.Menu;
+import com.lexindasoftservice.service.ContentService;
+import com.lexindasoftservice.service.MenuService;
 import com.lexindasoftservice.utils.Inputs;
-import com.lexindasoftservice.utils.Md5Util;
-import com.lexindasoftservice.utils.RandomPwdUtil;
 
 @Controller
 @RequestMapping(value="/validate/content")
 public class ContentController {
-
-	final static int PAGE_NUM=10;
+	private final Log logger = LogFactory.getLog(getClass()); 
+	final static int PAGE_NUM=20;
 	
 	@Autowired
-	AdminService adminService;
+	ContentService contentService;
 	
 	@Autowired
-	DepartmentService departmentService;
+	MenuService menuService;
 	
 	@RequestMapping(value="/manage",method = RequestMethod.GET)
-	public ModelAndView adminManage(){
+	public ModelAndView contentManage(){
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("content/content-manage");
 		return mav;
 	}
 	
-	@RequestMapping(value="/imglogoupload",method = RequestMethod.POST)
-	public void adminData(HttpServletResponse resp,HttpServletRequest req,@RequestParam(value="uploadLogo") MultipartFile uploadLogo){
-		 Map<String, Object> jsonMap = new HashMap<String, Object>();
-		String path = req.getSession().getServletContext().getRealPath("/")+File.separator+"ui"+File.separator+"setup";
-		int status=1;
-		if(ImageUploadUtils.isValidFormats(uploadLogo)){
-			  status=0;
-		  }
-		if(status != 0){
-			String picturePath = ImageUploadUtils.uploadImg(uploadLogo, path, "logo", 0);
-			String filePath = StringUtils.substringAfter(picturePath, req.getSession().getServletContext().getRealPath("/"));
-			jsonMap.put("imagePath", filePath);
+	@RequestMapping(value="/data",method = RequestMethod.POST)
+	public void contentData(HttpServletResponse resp,@RequestParam(value="title",required=false)String title,@RequestParam("status")int status
+			,@RequestParam(value="titleKey",required=false)String titleKey,@RequestParam("contentType")int contentType,@RequestParam("page")int page){
+		Content content = new Content();
+		title = Inputs.trimToNull(title);
+		titleKey = Inputs.trimToNull(titleKey);
+		content.setTitle(title);
+		content.setTitleKey(titleKey);
+		content.setStatus(status);
+		content.setContentType(contentType);
+		content.setPage(-1);
+		List<Content> contentAllList = contentService.getContentInfo(content);
+		int index =0;
+		if(page!=-1){
+			index = (page-1)*PAGE_NUM;
 		}
-		jsonMap.put("status", status);
+		content.setPage(index);
+		content.setPageNum(PAGE_NUM);
+		List<Content> contentList = contentService.getContentInfo(content);
+		Map<String,Object> resultMap = new HashMap<String,Object>();
 		Gson gson = new Gson();
 		String data=null;
-		data = gson.toJson(jsonMap);
+		resultMap.put("total", contentAllList.size());
+		resultMap.put("rows", contentList);
+		data = gson.toJson(resultMap);
         resp.setContentType("application/Json");
         resp.setCharacterEncoding("UTF-8");  
         resp.setHeader("Cache-Control", "no-cache"); 
@@ -80,90 +81,101 @@ public class ContentController {
        }
 	}
 	
-	@RequestMapping(value="/img1load",method = RequestMethod.POST)
-	public void setupImage1Data(HttpServletResponse resp,HttpServletRequest req,@RequestParam(value="uploadImage1Info") MultipartFile uploadImage1Info){
-		 Map<String, Object> jsonMap = new HashMap<String, Object>();
-		String path = req.getSession().getServletContext().getRealPath("/")+File.separator+"ui"+File.separator+"setup";
-		int status=1;
-		if(ImageUploadUtils.isValidFormats(uploadImage1Info)){
-			  status=0;
-		  }
-		if(status != 0){
-			String picturePath = ImageUploadUtils.uploadImg(uploadImage1Info, path, "img1", 0);
-			String filePath = StringUtils.substringAfter(picturePath, req.getSession().getServletContext().getRealPath("/"));
-			jsonMap.put("imagePath", filePath);
+	@RequestMapping(value="/add",method = RequestMethod.POST)
+	public void addContent(HttpServletResponse resp,@RequestParam("title")String title,@RequestParam("simpleTitle")String simpleTitle
+			,@RequestParam("titleKey")String titleKey,@RequestParam("contentType")String contentType,@RequestParam("content")String content){
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		title = Inputs.trimToNull(title);
+		titleKey = Inputs.trimToNull(titleKey);
+		simpleTitle = Inputs.trimToNull(simpleTitle);
+		content = Inputs.trimToNull(content);
+		int contentTypes=0;
+		if(contentType!=null){
+			contentTypes = Integer.parseInt(contentType);
 		}
-		jsonMap.put("status", status);
+		if(content!=null){
+			simpleTitle.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;");
+		}
+		Content contentInfo =getContentInfo(title,simpleTitle,titleKey,contentTypes,0,content);
+		int i = contentService.insertContentInfo(contentInfo);
+		jsonMap.put("result",i);
 		Gson gson = new Gson();
-		String data=null;
-		data = gson.toJson(jsonMap);
+        String list1 = gson.toJson(jsonMap);
         resp.setContentType("application/Json");
         resp.setCharacterEncoding("UTF-8");  
         resp.setHeader("Cache-Control", "no-cache"); 
         PrintWriter out;
         try { 
             out = resp.getWriter();  
-            out.print(data);
+            out.print(list1);
        } catch (IOException e) {  
             e.printStackTrace();  
        }
 	}
 	
-	@RequestMapping(value="/img2load",method = RequestMethod.POST)
-	public void setupImage2Data(HttpServletResponse resp,HttpServletRequest req,@RequestParam(value="uploadImage2Info") MultipartFile uploadImage2Info){
-		 Map<String, Object> jsonMap = new HashMap<String, Object>();
-		String path = req.getSession().getServletContext().getRealPath("/")+File.separator+"ui"+File.separator+"setup";
-		int status=1;
-		if(ImageUploadUtils.isValidFormats(uploadImage2Info)){
-			  status=0;
-		  }
-		if(status != 0){
-			String picturePath = ImageUploadUtils.uploadImg(uploadImage2Info, path, "img2", 0);
-			String filePath = StringUtils.substringAfter(picturePath, req.getSession().getServletContext().getRealPath("/"));
-			jsonMap.put("imagePath", filePath);
+	/*@RequestMapping(value="/active",method = RequestMethod.POST)
+	public void activeAdmin(@RequestParam("id")int id,HttpServletResponse resp){
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		Admin admin=adminService.getAdminById(id);
+		if(admin.getStatus()==0){
+			admin.setStatus(1);
+		}else if(admin.getStatus()==1){
+			admin.setStatus(0);
 		}
-		jsonMap.put("status", status);
+		int i = adminService.updateAdminInfo(admin);
+		if(i>0){
+			jsonMap.put("success", true);
+		}else{
+			jsonMap.put("success", false);
+			jsonMap.put("errorMsg", "修改失败!");
+		}
 		Gson gson = new Gson();
-		String data=null;
-		data = gson.toJson(jsonMap);
+        String list1 = gson.toJson(jsonMap);
         resp.setContentType("application/Json");
         resp.setCharacterEncoding("UTF-8");  
         resp.setHeader("Cache-Control", "no-cache"); 
         PrintWriter out;
         try { 
             out = resp.getWriter();  
-            out.print(data);
+            out.print(list1);
+            // 用于返回对象参数 
+       } catch (IOException e) {  
+            e.printStackTrace();  
+       }
+	}*/
+	
+	@RequestMapping(value="/info",method = RequestMethod.POST)
+	public void getAdminInfo(HttpServletResponse resp,@RequestParam("id") int id){
+		Content content=contentService.getContentInfoById(id);
+		Menu menu = new Menu();
+		menu.setId(id);
+		Menu menuInfo = menuService.getMenuInfoById(menu);
+		if(content!=null){
+			content.setContentTypeDesc(menuInfo.getMenuName());
+		}
+		Gson gson = new Gson();
+        String list1 = gson.toJson(content);
+        resp.setContentType("application/Json");
+        resp.setCharacterEncoding("UTF-8");  
+        resp.setHeader("Cache-Control", "no-cache"); 
+        PrintWriter out;
+        try { 
+            out = resp.getWriter();  
+            out.print(list1);
+            // 用于返回对象参数 
        } catch (IOException e) {  
             e.printStackTrace();  
        }
 	}
 	
-	@RequestMapping(value="/img3load",method = RequestMethod.POST)
-	public void setupImage3Data(HttpServletResponse resp,HttpServletRequest req,@RequestParam(value="uploadImage3Info") MultipartFile uploadImage3Info){
-		 Map<String, Object> jsonMap = new HashMap<String, Object>();
-		String path = req.getSession().getServletContext().getRealPath("/")+File.separator+"ui"+File.separator+"setup";
-		int status=1;
-		if(ImageUploadUtils.isValidFormats(uploadImage3Info)){
-			  status=0;
-		  }
-		if(status != 0){
-			String picturePath = ImageUploadUtils.uploadImg(uploadImage3Info, path, "img3", 0);
-			String filePath = StringUtils.substringAfter(picturePath, req.getSession().getServletContext().getRealPath("/"));
-			jsonMap.put("imagePath", filePath);
-		}
-		jsonMap.put("status", status);
-		Gson gson = new Gson();
-		String data=null;
-		data = gson.toJson(jsonMap);
-        resp.setContentType("application/Json");
-        resp.setCharacterEncoding("UTF-8");  
-        resp.setHeader("Cache-Control", "no-cache"); 
-        PrintWriter out;
-        try { 
-            out = resp.getWriter();  
-            out.print(data);
-       } catch (IOException e) {  
-            e.printStackTrace();  
-       }
+	private Content getContentInfo(String title,String simple_title,String title_key,int contentType,int status,String content){
+		Content contentInfo = new Content();
+		contentInfo.setTitle(title);
+		contentInfo.setSimpleTitle(simple_title);
+		contentInfo.setTitleKey(title_key);
+		contentInfo.setContentType(contentType);
+		contentInfo.setStatus(status);
+		contentInfo.setContent(content);
+		return contentInfo;
 	}
 }
