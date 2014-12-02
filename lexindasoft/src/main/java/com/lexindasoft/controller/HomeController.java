@@ -37,11 +37,13 @@ public class HomeController {
 		logger.debug("home");
 		ModelAndView mav = new ModelAndView();  
 		int id = UserUtils.getId(req);
-		if(id>0){
+		/*if(id>0){
 			 mav.setViewName("redirect:/validate/index");
 		}else{
 			 mav.setViewName("redirect:/login");
-		}
+		}*/
+		//mav.setViewName("site/home");
+		mav.setViewName("site/secondLevel1");
 		return mav;
 	}
 	

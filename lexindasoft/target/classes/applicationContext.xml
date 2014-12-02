@@ -19,15 +19,12 @@
     
     <context:component-scan base-package="com.lexindasoft" />
     <context:component-scan base-package="com.lexindasoftservice" />
-    
-    <!-- 拦截器 -->  
-    <mvc:interceptors>  
-        <!-- 多个拦截器,顺序执行 -->  
+    <!-- <mvc:interceptors>  
         <mvc:interceptor>  
-           <mvc:mapping path="/*" /><!-- 如果不配置或/*,将拦截所有的Controller -->  
+           <mvc:mapping path="/validate/**" />
            <bean class="com.lexindasoft.interceptor.CommonInterceptor"></bean>  
         </mvc:interceptor>  
-    </mvc:interceptors>  
+    </mvc:interceptors>   -->
 	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -41,12 +38,12 @@
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
-        <!-- <property name="url" value="jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8"></property>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8"></property>
         <property name="username" value="root"></property>
-        <property name="password" value="123456"></property> -->
-        <property name="url" value="jdbc:mysql://w.rdc.sae.sina.com.cn:3307/app_lxdsoft?characterEncoding=UTF-8"></property>
+        <property name="password" value="123456"></property>
+        <!-- <property name="url" value="jdbc:mysql://w.rdc.sae.sina.com.cn:3307/app_lxdsoft?characterEncoding=UTF-8"></property>
         <property name="username" value="jzkwj22myz"></property>
-        <property name="password" value="3k3wlxlmh4iyiw40k0iiximll01wly2h5hh454xz"></property>
+        <property name="password" value="3k3wlxlmh4iyiw40k0iiximll01wly2h5hh454xz"></property> -->
         <property name="maxActive" value="100"></property>
         <property name="maxIdle" value="30"></property>
         <property name="maxWait" value="500"></property>
